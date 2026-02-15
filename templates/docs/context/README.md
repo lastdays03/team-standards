@@ -50,9 +50,6 @@
 - `notebooklm-mcp-runbook.md`
   - 역할: NotebookLM MCP 등록/점검/대체 루틴 운영 가이드
   - 갱신 트리거: MCP 인증/호출 방식 변경 시
-- `notion-common-rules-template.md`
-  - 역할: Notion 공통 규칙 구조/템플릿/프로젝트 적용 체크리스트 관리
-  - 갱신 트리거: 공통 규칙 운영 구조 또는 동기화 절차 변경 시
 - `tooling-defaults.md`
   - 역할: MCP 서버/스킬 기본셋 관리
   - 갱신 트리거: 기본 툴링 프로파일 변경 시

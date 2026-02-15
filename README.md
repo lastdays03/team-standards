@@ -17,7 +17,6 @@
 - `templates/docs/context/notebooklm-query-templates.md`
 - `templates/docs/context/notebooklm-analysis-action-log.md`
 - `templates/docs/context/notebooklm-mcp-runbook.md`
-- `templates/docs/context/notion-common-rules-template.md`
 - `templates/docs/context/context-memory-validation-log.md`
 - `templates/docs/context/tooling-defaults.md`
 - `scripts/apply-standards.sh`

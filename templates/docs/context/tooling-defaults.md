@@ -3,11 +3,10 @@
 목적: 새 프로젝트 시작 시 즉시 사용할 MCP 서버/스킬 기본셋을 고정한다.
 
 ## MCP Servers (Default)
-1. Notion
-2. NotebookLM
-3. Linear
-4. GitHub (gh)
-5. Playwright
+1. NotebookLM
+2. Linear
+3. GitHub (gh)
+4. Playwright
 
 ## Skills (Default)
 1. architecture-patterns
@@ -15,8 +14,7 @@
 3. python-testing-patterns
 4. gh-address-comments
 5. gh-fix-ci
-6. notion-meeting-intelligence
-7. linear
+6. linear
 
 ## 운영 규칙
 - 기본셋은 시작 속도를 위한 권장값이다.

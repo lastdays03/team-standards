@@ -26,15 +26,14 @@
 - 운영 규칙 변경 시: `ops-rules.md` 갱신
 - 세션 종료 직전: `handoff.md` 갱신
 
-## Notion + NotebookLM Analysis-to-Action Routine
-- 목적: 공통 규칙은 Notion에서 관리하고, NotebookLM 분석 결과는 프로젝트 실행 문서(L1)로 확정 반영한다.
-- 운영 템플릿: `docs/context/notion-common-rules-template.md`
+## Shared Rules + NotebookLM Analysis-to-Action Routine
+- 목적: 공통 규칙은 `team-standards`(Git)에서 관리하고, NotebookLM 분석 결과는 프로젝트 실행 문서(L1)로 확정 반영한다.
 - 역할:
-1. 공통 규칙 원천: Notion
+1. 공통 규칙 원천: `team-standards`(Git)
 2. 프로젝트 실행 원천: 레포 문서(L1)
 3. 프로젝트 자료 탐색/분석: NotebookLM
 - 실행 순서:
-1. 공통 규칙 변경사항을 Notion에서 확인
+1. 공통 규칙 변경사항을 `team-standards`에서 확인
 2. 프로젝트 영향 항목을 L1 문서(`docs/context/*`, `docs/planning/*`)에 반영
 3. 프로젝트별 자료는 NotebookLM 질의/분석으로 검증
 4. 분석 반영 후 `docs/context/notebooklm-analysis-action-log.md`에 1줄 기록
