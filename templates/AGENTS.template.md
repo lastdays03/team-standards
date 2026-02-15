@@ -69,6 +69,6 @@
 - If commit/push fails, report the failure reason and current git state.
 
 ## Tooling Baseline
-- MCP servers (default): Notion, NotebookLM, Linear, GitHub, Playwright
+- MCP servers (default): Notion, Linear, GitHub, Playwright
 - Skills (default): architecture-patterns, api-design-principles, python-testing-patterns, gh-address-comments, gh-fix-ci, linear
 - Rule: tool/skill defaults can be reduced per project, and exceptions must be recorded in `docs/context/decisions.md`.

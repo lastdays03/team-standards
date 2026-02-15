@@ -4,10 +4,9 @@
 
 ## MCP Servers (Default)
 1. Notion
-2. NotebookLM
-3. Linear
-4. GitHub (gh)
-5. Playwright
+2. Linear
+3. GitHub (gh)
+4. Playwright
 
 ## Skills (Default)
 1. architecture-patterns
