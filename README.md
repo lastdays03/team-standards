@@ -17,21 +17,33 @@
 - `scripts/install.sh`
 
 ## 빠른 설치(curl)
+현재 폴더에 바로 설치:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install.sh | bash -s -- <target-repo-path> <project-name>
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install.sh | bash
 ```
 
-예시:
+현재 폴더 + 프로젝트명 지정:
+```bash
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install.sh | bash -s -- my-new-project
+```
+
+대상 경로 + 프로젝트명 지정:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install.sh | bash -s -- ~/dev/my-new-project my-new-project
 ```
 
 ## 로컬 사용법
+현재 폴더에 바로 적용:
 ```bash
-./scripts/apply-standards.sh <target-repo-path> <project-name>
+./scripts/apply-standards.sh
 ```
 
-예시:
+프로젝트명만 지정:
+```bash
+./scripts/apply-standards.sh my-new-project
+```
+
+대상 경로 + 프로젝트명 지정:
 ```bash
 ./scripts/apply-standards.sh ~/dev/my-new-project my-new-project
 ```

@@ -1,13 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -lt 2 ]]; then
-  echo "Usage: $0 <target-repo-path> <project-name>"
-  exit 1
+# Usage:
+#   apply-standards.sh
+#   apply-standards.sh <project-name>
+#   apply-standards.sh <target-repo-path> <project-name>
+#
+# Defaults:
+# - target-repo-path: current directory
+# - project-name: basename of target-repo-path
+
+TARGET_DIR="$PWD"
+PROJECT_NAME="$(basename "$TARGET_DIR")"
+
+if [[ $# -eq 1 ]]; then
+  if [[ -d "$1" ]]; then
+    TARGET_DIR="$1"
+    PROJECT_NAME="$(basename "$TARGET_DIR")"
+  else
+    PROJECT_NAME="$1"
+  fi
+elif [[ $# -ge 2 ]]; then
+  TARGET_DIR="$1"
+  PROJECT_NAME="$2"
 fi
 
-TARGET_DIR="$1"
-PROJECT_NAME="$2"
 TEMPLATE_ROOT="$(cd "$(dirname "$0")/.." && pwd)/templates"
 TODAY="$(date +%F)"
 
@@ -35,6 +52,7 @@ copy_and_render "$TEMPLATE_ROOT/docs/context/decisions.md" "$TARGET_DIR/docs/con
 copy_and_render "$TEMPLATE_ROOT/docs/context/handoff.md" "$TARGET_DIR/docs/context/handoff.md"
 
 echo "Applied standards to: $TARGET_DIR"
+echo "Project name: $PROJECT_NAME"
 echo "Generated files:"
 echo "- AGENTS.md"
 echo "- docs/context/README.md"

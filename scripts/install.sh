@@ -1,16 +1,41 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -lt 2 ]]; then
-  echo "Usage: bash install.sh <target-repo-path> <project-name> [repo] [ref]"
-  echo "Example: bash install.sh ~/dev/my-new-project my-new-project lastdays03/team-standards main"
-  exit 1
+# Usage:
+#   bash install.sh
+#   bash install.sh <project-name>
+#   bash install.sh <target-repo-path> <project-name>
+#   bash install.sh <target-repo-path> <project-name> [repo] [ref]
+#
+# Defaults:
+# - target-repo-path: current directory
+# - project-name: basename of target-repo-path
+# - repo: lastdays03/team-standards
+# - ref: main
+
+TARGET_DIR="$PWD"
+PROJECT_NAME="$(basename "$TARGET_DIR")"
+REPO="lastdays03/team-standards"
+REF="main"
+
+if [[ $# -eq 1 ]]; then
+  if [[ -d "$1" ]]; then
+    TARGET_DIR="$1"
+    PROJECT_NAME="$(basename "$TARGET_DIR")"
+  else
+    PROJECT_NAME="$1"
+  fi
+elif [[ $# -ge 2 ]]; then
+  TARGET_DIR="$1"
+  PROJECT_NAME="$2"
 fi
 
-TARGET_DIR="$1"
-PROJECT_NAME="$2"
-REPO="${3:-lastdays03/team-standards}"
-REF="${4:-main}"
+if [[ $# -ge 3 ]]; then
+  REPO="$3"
+fi
+if [[ $# -ge 4 ]]; then
+  REF="$4"
+fi
 
 if [[ ! -d "$TARGET_DIR" ]]; then
   echo "Target repo path does not exist: $TARGET_DIR"
