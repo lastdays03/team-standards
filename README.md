@@ -4,7 +4,7 @@
 
 ## 목적
 - 새 프로젝트 시작 시 공통 규칙/컨텍스트 문서를 한 번에 적용한다.
-- 글로벌 규칙을 먼저 적용하고, 프로젝트 예외는 `docs/context/decisions.md`에 기록한다.
+- 개인 기본 프로파일(규칙 + 컨텍스트 + MCP/스킬 기본셋)로 즉시 작업 가능한 시작점을 제공한다.
 
 ## 구성
 - `templates/AGENTS.template.md`
@@ -14,6 +14,12 @@
 - `templates/docs/context/dev-status.md`
 - `templates/docs/context/decisions.md`
 - `templates/docs/context/handoff.md`
+- `templates/docs/context/notebooklm-query-templates.md`
+- `templates/docs/context/notebooklm-analysis-action-log.md`
+- `templates/docs/context/notebooklm-mcp-runbook.md`
+- `templates/docs/context/notion-common-rules-template.md`
+- `templates/docs/context/context-memory-validation-log.md`
+- `templates/docs/context/tooling-defaults.md`
 - `scripts/apply-standards.sh`
 - `scripts/install.sh`
 
@@ -50,10 +56,12 @@ curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scri
 ```
 
 ## 적용 순서
-1. `docs/context/global-rules.md` 확인(글로벌 공통)
-2. `AGENTS.md` 확인(레포 레벨 규칙)
-3. `docs/context/ops-rules.md`/`dev-status.md`/`decisions.md`/`handoff.md` 운영 시작
+1. `docs/context/global-rules.md` 확인
+2. `AGENTS.md` 확인
+3. `docs/context/tooling-defaults.md`에서 MCP/스킬 기본셋 확인
+4. `docs/context/ops-rules.md`/`dev-status.md`/`decisions.md`/`handoff.md` 운영 시작
 
 ## 업데이트 원칙
 - 공통 규칙 변경은 이 저장소에서 PR로 먼저 확정한다.
 - 각 프로젝트는 필요 시 동일 명령으로 재적용하고, 충돌은 프로젝트에서 머지한다.
+- 프로젝트별 예외는 `docs/context/decisions.md`에 기록한다.
