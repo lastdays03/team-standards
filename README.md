@@ -14,8 +14,19 @@
 - `templates/docs/context/decisions.md`
 - `templates/docs/context/handoff.md`
 - `scripts/apply-standards.sh`
+- `scripts/install.sh`
 
-## 사용법
+## 빠른 설치(curl)
+```bash
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install.sh | bash -s -- <target-repo-path> <project-name>
+```
+
+예시:
+```bash
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install.sh | bash -s -- ~/dev/my-new-project my-new-project
+```
+
+## 로컬 사용법
 ```bash
 ./scripts/apply-standards.sh <target-repo-path> <project-name>
 ```
