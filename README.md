@@ -4,10 +4,11 @@
 
 ## 목적
 - 새 프로젝트 시작 시 공통 규칙/컨텍스트 문서를 한 번에 적용한다.
-- 프로젝트별 예외는 각 프로젝트 `docs/context/decisions.md`에 별도 기록한다.
+- 글로벌 규칙을 먼저 적용하고, 프로젝트 예외는 `docs/context/decisions.md`에 기록한다.
 
 ## 구성
 - `templates/AGENTS.template.md`
+- `templates/docs/context/global-rules.md`
 - `templates/docs/context/README.md`
 - `templates/docs/context/ops-rules.md`
 - `templates/docs/context/dev-status.md`
@@ -47,6 +48,11 @@ curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scri
 ```bash
 ./scripts/apply-standards.sh ~/dev/my-new-project my-new-project
 ```
+
+## 적용 순서
+1. `docs/context/global-rules.md` 확인(글로벌 공통)
+2. `AGENTS.md` 확인(레포 레벨 규칙)
+3. `docs/context/ops-rules.md`/`dev-status.md`/`decisions.md`/`handoff.md` 운영 시작
 
 ## 업데이트 원칙
 - 공통 규칙 변경은 이 저장소에서 PR로 먼저 확정한다.

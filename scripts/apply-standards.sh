@@ -45,6 +45,7 @@ copy_and_render() {
 }
 
 copy_and_render "$TEMPLATE_ROOT/AGENTS.template.md" "$TARGET_DIR/AGENTS.md"
+copy_and_render "$TEMPLATE_ROOT/docs/context/global-rules.md" "$TARGET_DIR/docs/context/global-rules.md"
 copy_and_render "$TEMPLATE_ROOT/docs/context/README.md" "$TARGET_DIR/docs/context/README.md"
 copy_and_render "$TEMPLATE_ROOT/docs/context/ops-rules.md" "$TARGET_DIR/docs/context/ops-rules.md"
 copy_and_render "$TEMPLATE_ROOT/docs/context/dev-status.md" "$TARGET_DIR/docs/context/dev-status.md"
@@ -55,6 +56,7 @@ echo "Applied standards to: $TARGET_DIR"
 echo "Project name: $PROJECT_NAME"
 echo "Generated files:"
 echo "- AGENTS.md"
+echo "- docs/context/global-rules.md"
 echo "- docs/context/README.md"
 echo "- docs/context/ops-rules.md"
 echo "- docs/context/dev-status.md"

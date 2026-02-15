@@ -4,14 +4,16 @@
 
 ## Source Of Truth
 1. `AGENTS.md`
-2. `docs/context/ops-rules.md`
-3. `docs/context/dev-status.md`, `docs/context/decisions.md`, `docs/context/handoff.md`
+2. `docs/context/global-rules.md`
+3. `docs/context/ops-rules.md`
+4. `docs/context/dev-status.md`, `docs/context/decisions.md`, `docs/context/handoff.md`
 
 ## 30-Second Start Checklist
-1. `docs/context/dev-status.md`
-2. `docs/context/decisions.md`
-3. `docs/context/handoff.md`
-4. `docs/context/ops-rules.md`
+1. `docs/context/global-rules.md`
+2. `docs/context/dev-status.md`
+3. `docs/context/decisions.md`
+4. `docs/context/handoff.md`
+5. `docs/context/ops-rules.md`
 
 ## 30-Second End Checklist
 1. `dev-status.md` 갱신

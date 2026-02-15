@@ -3,6 +3,10 @@
 ## Scope
 - These rules apply only to this repository.
 
+## Global Rules Reference
+- Global baseline: `docs/context/global-rules.md`
+- Global rules are applied first; project-specific exceptions must be recorded in `docs/context/decisions.md`.
+
 ## Collaboration Rules
 - Use Git-Flow branch strategy:
   - `main`: production-ready only, no direct push.
@@ -18,10 +22,11 @@
 
 ## Context Rules
 - Start-of-session restore order:
-1. `docs/context/dev-status.md`
-2. `docs/context/decisions.md`
-3. `docs/context/handoff.md`
-4. `docs/context/ops-rules.md`
+1. `docs/context/global-rules.md`
+2. `docs/context/dev-status.md`
+3. `docs/context/decisions.md`
+4. `docs/context/handoff.md`
+5. `docs/context/ops-rules.md`
 
 - Handoff trigger (`핸드오프`, `마무리`, `종료`):
 1. Update `docs/context/handoff.md`
