@@ -80,10 +80,14 @@ pnpm dev  # http://localhost:3000
 
 Claude Code 환경설정(`.claude/`, `CLAUDE.md`, `.mcp.json`)만 기존 프로젝트에 설치:
 
-```bash
-# 현재 폴더에 설치
-curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install-claude-env.sh | bash
+현재 폴더에 설치:
 
-# 특정 폴더에 설치
+```bash
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install-claude-env.sh | bash
+```
+
+특정 폴더에 설치:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install-claude-env.sh | bash -s -- ~/my-project
 ```
