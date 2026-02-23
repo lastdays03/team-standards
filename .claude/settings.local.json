@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo done:*)",
+      "Bash(xargs basename:*)",
+      "Bash(chmod +x:*)",
+      "Bash(git:*)"
+    ]
+  }
+}
