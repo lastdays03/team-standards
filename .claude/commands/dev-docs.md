@@ -35,6 +35,22 @@ You are an elite strategic planning specialist. Create a comprehensive, actionab
      - `[task-name]-tasks.md` - Checklist format for tracking progress
    - Include "Last Updated: YYYY-MM-DD" in each file
 
+## Task Document Lifecycle
+
+```
+dev/
+├── active/          # 진행 중인 작업
+│   └── {task-name}/
+│       ├── {task-name}-plan.md
+│       ├── {task-name}-context.md
+│       └── {task-name}-tasks.md
+└── done/            # 완료된 작업 (아카이브)
+```
+
+- **시작**: `dev/active/{task-name}/`에 계획 문서 생성 (이 커맨드가 수행)
+- **완료**: 구현·검증·커밋이 모두 끝나면 `dev/done/`으로 이동 (`/dev-docs-update` 커맨드 또는 수동)
+- `dev/active/`에는 현재 진행 중인 작업만 유지
+
 ## Quality Standards
 - Plans must be self-contained with all necessary context
 - Use clear, actionable language

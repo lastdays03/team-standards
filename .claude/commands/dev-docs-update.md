@@ -43,7 +43,13 @@ Include any relevant information about:
 - Commands that need to be run on restart
 - Any temporary workarounds that need permanent fixes
 
-### 5. Create Handoff Notes
+### 5. Archive Completed Tasks
+For tasks in `/dev/active/` where ALL checklist items in `*-tasks.md` are marked ✅:
+- Move the entire `dev/active/{task-name}/` directory to `dev/done/{task-name}/`
+- Keep `dev/active/` clean — only in-progress tasks should remain
+- Do NOT archive if any tasks are still pending or in-progress
+
+### 6. Create Handoff Notes
 If switching to a new conversation:
 - Exact file and line being edited
 - The goal of current changes
