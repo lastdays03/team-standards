@@ -150,7 +150,6 @@ install_claude_env() {
     "docs/architecture"
     "docs/operations"
     "docs/dev-guide"
-    "docs/research"
     "docs/archive"
   )
 
@@ -172,7 +171,6 @@ install_claude_env() {
     "docs/architecture/README.md"
     "docs/operations/README.md"
     "docs/dev-guide/README.md"
-    "docs/research/README.md"
     "docs/archive/README.md"
   )
 
@@ -181,7 +179,7 @@ install_claude_env() {
       cp "$SRC_DIR/$readme" "$TARGET_DIR/$readme"
     fi
   done
-  ok "docs/ — 9 folders + READMEs (덮어쓰기)"
+  ok "docs/ — 8 folders + READMEs (덮어쓰기)"
 
   # ━━━ 4. docs/context/ — 없으면 생성, 있으면 보존 ━━━
   local template_dir="$SRC_DIR/scripts/templates/context"

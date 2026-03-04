@@ -50,6 +50,11 @@ For tasks in `/docs/dev/active/` where ALL checklist items in `*-tasks.md` are m
 - Keep `docs/dev/active/` clean — only in-progress tasks should remain
 - Do NOT archive if any tasks are still pending or in-progress
 
+### 5-1. Archive Completed Planning & Research Docs
+`docs/planning/`의 독립 문서(`PLAN-*.md`, `REPORT-*.md`) 중 목적이 달성된 문서:
+- 해당 문서를 `docs/planning/completed/`로 이동
+- 판단 기준: 문서의 결론이 도출되었고, 후속 작업이 없거나 이미 반영된 경우
+
 ### 6. Create Handoff Notes
 If switching to a new conversation:
 - Exact file and line being edited

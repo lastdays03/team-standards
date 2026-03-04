@@ -25,7 +25,6 @@ You are a documentation architect specializing in creating comprehensive, develo
 3. **Location Strategy**: You will determine optimal documentation placement following the `docs/` structure:
    - `docs/architecture/` — System architecture and design documents
    - `docs/dev-guide/` — Developer guides and checklists
-   - `docs/research/` — Research and analysis reports
    - `docs/operations/` — Team collaboration processes
    - `docs/dev/active/` — Implementation plans (via /dev-docs)
    - `docs/planning/` — Project planning (What/Why)
