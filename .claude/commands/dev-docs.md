@@ -31,7 +31,7 @@ You are an elite strategic planning specialist. Create a comprehensive, actionab
    - Create directory: `docs/dev/active/[task-name]/` (relative to project root)
    - Generate three files:
      - `[task-name]-plan.md` - The comprehensive plan
-     - `[task-name]-context.md` - Key files, decisions, dependencies
+     - `[task-name]-context.md` - Key files, decisions, dependencies (includes `## Related Planning Doc` section linking to `docs/planning/PLAN-*.md` if exists)
      - `[task-name]-tasks.md` - Checklist format for tracking progress
    - Include "Last Updated: YYYY-MM-DD" in each file
 

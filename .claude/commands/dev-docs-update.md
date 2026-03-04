@@ -46,6 +46,7 @@ Include any relevant information about:
 ### 5. Archive Completed Tasks
 For tasks in `/docs/dev/active/` where ALL checklist items in `*-tasks.md` are marked ✅:
 - Move the entire `docs/dev/active/{task-name}/` directory to `docs/dev/done/{task-name}/`
+- **연관 기획 문서 자동 이동**: `{task-name}-context.md`의 `## Related Planning Doc` 섹션에 기록된 `docs/planning/` 문서를 `docs/planning/completed/`로 함께 이동
 - Keep `docs/dev/active/` clean — only in-progress tasks should remain
 - Do NOT archive if any tasks are still pending or in-progress
 
