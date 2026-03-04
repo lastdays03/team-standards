@@ -8,7 +8,7 @@ We're approaching context limits. Please update the development documentation to
 ## Required Updates
 
 ### 1. Update Active Task Documentation
-For each task in `/dev/active/`:
+For each task in `/docs/dev/active/`:
 - Update `[task-name]-context.md` with:
   - Current implementation state
   - Key decisions made this session
@@ -44,9 +44,9 @@ Include any relevant information about:
 - Any temporary workarounds that need permanent fixes
 
 ### 5. Archive Completed Tasks
-For tasks in `/dev/active/` where ALL checklist items in `*-tasks.md` are marked ✅:
-- Move the entire `dev/active/{task-name}/` directory to `dev/done/{task-name}/`
-- Keep `dev/active/` clean — only in-progress tasks should remain
+For tasks in `/docs/dev/active/` where ALL checklist items in `*-tasks.md` are marked ✅:
+- Move the entire `docs/dev/active/{task-name}/` directory to `docs/dev/done/{task-name}/`
+- Keep `docs/dev/active/` clean — only in-progress tasks should remain
 - Do NOT archive if any tasks are still pending or in-progress
 
 ### 6. Create Handoff Notes

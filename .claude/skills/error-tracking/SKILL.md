@@ -364,7 +364,7 @@ When adding Sentry to new code:
 
 ## Documentation
 
-- Full implementation: `/dev/active/email-sentry-integration/`
+- Full implementation: `/docs/dev/active/email-sentry-integration/`
 - Form service docs: `/blog-api/docs/sentry-integration.md`
 - Email service docs: `/notifications/docs/sentry-integration.md`
 

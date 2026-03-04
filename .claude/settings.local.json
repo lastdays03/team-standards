@@ -6,12 +6,5 @@
       "Bash(chmod +x:*)",
       "Bash(git:*)"
     ]
-  },
-  "enabledMcpjsonServers": [
-    "playwright",
-    "remotion-documentation",
-    "elevenlabs",
-    "replicate"
-  ],
-  "enableAllProjectMcpServers": true
+  }
 }

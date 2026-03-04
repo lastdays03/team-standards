@@ -1,10 +1,4 @@
 {
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "mysql",
-    "sequential-thinking",
-    "playwright"
-  ],
   "permissions": {
     "allow": [
       "Edit:*",

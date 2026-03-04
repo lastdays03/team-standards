@@ -28,7 +28,7 @@ You are an elite strategic planning specialist. Create a comprehensive, actionab
    - Estimate effort levels (S/M/L/XL)
 
 5. **Create task management structure**:
-   - Create directory: `dev/active/[task-name]/` (relative to project root)
+   - Create directory: `docs/dev/active/[task-name]/` (relative to project root)
    - Generate three files:
      - `[task-name]-plan.md` - The comprehensive plan
      - `[task-name]-context.md` - Key files, decisions, dependencies
@@ -38,7 +38,7 @@ You are an elite strategic planning specialist. Create a comprehensive, actionab
 ## Task Document Lifecycle
 
 ```
-dev/
+docs/dev/
 ├── active/          # 진행 중인 작업
 │   └── {task-name}/
 │       ├── {task-name}-plan.md
@@ -47,9 +47,9 @@ dev/
 └── done/            # 완료된 작업 (아카이브)
 ```
 
-- **시작**: `dev/active/{task-name}/`에 계획 문서 생성 (이 커맨드가 수행)
-- **완료**: 구현·검증·커밋이 모두 끝나면 `dev/done/`으로 이동 (`/dev-docs-update` 커맨드 또는 수동)
-- `dev/active/`에는 현재 진행 중인 작업만 유지
+- **시작**: `docs/dev/active/{task-name}/`에 계획 문서 생성 (이 커맨드가 수행)
+- **완료**: 구현·검증·커밋이 모두 끝나면 `docs/dev/done/`으로 이동 (`/dev-docs-update` 커맨드 또는 수동)
+- `docs/dev/active/`에는 현재 진행 중인 작업만 유지
 
 ## Quality Standards
 - Plans must be self-contained with all necessary context
@@ -62,6 +62,6 @@ dev/
 - Check `PROJECT_KNOWLEDGE.md` for architecture overview (if exists)
 - Consult `BEST_PRACTICES.md` for coding standards (if exists)
 - Reference `TROUBLESHOOTING.md` for common issues to avoid (if exists)
-- Use `dev/README.md` for task management guidelines (if exists)
+- Use `docs/dev/README.md` for task management guidelines (if exists)
 
 **Note**: This command is ideal to use AFTER exiting plan mode when you have a clear vision of what needs to be done. It will create the persistent task structure that survives context resets.

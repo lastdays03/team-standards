@@ -1,0 +1,22 @@
+# QWarty 프로젝트 결정 아카이브
+
+> docs/context/decisions.md에서 분리. QWarty 앱 전용 결정 기록.
+
+## Entries
+
+- 2026-02-15 | Backend API HTTP 계층은 `app/api/v2/<feature>/<function>.py`로 운영 | API 모듈 경로 일관성 확보
+- 2026-02-15 | Backend 비즈니스 계층은 `app/features/<feature>/{domain,application}`에 배치 | 기능별 경계 명확화
+- 2026-02-15 | 운영콘솔 네이밍은 `ops`로 통일(`ops-console`, `ops_console` 금지) | 경로/용어 혼선 방지
+- 2026-02-15 | Frontend 피처는 public entry(`index.ts`) 유지, 서버 컴포넌트에서 hook export 직접 import 금지 | 레이어 의존성 규칙 유지
+- 2026-02-15 | 루트(`/`)는 랜딩 대신 `/dashboard`로 리다이렉트 | 기본 진입 동선 단순화
+- 2026-02-15 | 관리자 기본 URL은 `/ops` 유지 | 운영 진입점 단일화
+- 2026-02-15 | `/ops` 접근 권한은 플랫폼 운영자(`User.is_superuser=true`)로 단일화하고 팀 단위 관리자 모델은 보류 | 현재 제품 기획 범위(팀 기능 미정)와 구현 복잡도를 일치시킨다
+- 2026-02-20 | 로컬 파일 저장은 `STORAGE_LOCAL_ROOT` 단일 변수로 관리하고, 미설정 시 기본 경로를 `app-backend/uploads`로 사용 | 초기 운영 복잡도를 낮추고 환경별 경로 변경은 ENV만으로 처리하기 위함
+- 2026-02-20 | ActionKit 파일 경로는 `uploads/actionkit/{laws|kits}/{category_or_chapter}/{item_id}/v{version}/{filename}` 규칙으로 관리 | 카테고리 기반 탐색성과 버전 롤백 가능성을 동시에 확보하기 위함
+- 2026-03-02 | 로드맵 템플릿 모델은 `RoadmapTemplate/Step/Action` 3단 구조로 분리 | Roadmap 모델과 1:1 매핑 + 스텝/액션 독립 편집 가능
+- 2026-03-02 | FK CASCADE는 SQLModel `sa_column_kwargs` 대신 Alembic 마이그레이션에서만 정의 | SQLModel이 `sa_column_kwargs={"ondelete"}` 미지원하여 런타임 에러 발생
+- 2026-03-02 | 템플릿 상태 머신은 DRAFT→REVIEW→APPROVED→ARCHIVED 4단계 + REVIEW→DRAFT 반려 | DRAFT→APPROVED 직접 전환 차단하여 검수 프로세스 강제
+- 2026-03-02 | TemplateResolver는 3단계 우선순위 매칭 (업종+창업방식 정확 매칭 → 업종만 공통 → None) | 점진적 템플릿 확장 지원 + 미매칭 시 기존 파이프라인 자연 fallback
+- 2026-03-02 | 파이프라인 통합 시 TemplateResolver를 try-except로 감싸서 호출 | 기존 테스트의 mock session에서 테이블 미존재 에러 방지, 하위 호환성 유지
+- 2026-03-02 | Ops UI 상태변경/삭제 확인은 브라우저 prompt()/confirm() 대신 shadcn/ui Dialog 사용 | UX 일관성 + 사유 입력 지원
+- 2026-03-02 | 액션 편집은 인라인 폼 패턴 (추가: 토글 폼, 수정: 행 전환) | ActionKit 기존 패턴과 일관, 별도 모달 불필요
