@@ -137,12 +137,11 @@ install-claude-env.sh [options] [target-path]
   settings.json     # Hook bindings & permissions
 docs/
   context/          # 세션 운영 (상태/결정/핸드오프/규칙)
-  planning/         # 기획 문서 (What/Why)
+  planning/         # 기획 문서 + 리서치 보고서 (PLAN-*.md, REPORT-*.md)
   dev/              # 구현 계획 (How) — /dev-docs로 생성
   architecture/     # 시스템 아키텍처
   operations/       # 팀 협업 프로세스
   dev-guide/        # 개발자 가이드
-  research/         # 리서치 보고서
   archive/          # 역할 완료 문서
 scripts/
   install-claude-env.sh   # 설치 스크립트

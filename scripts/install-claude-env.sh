@@ -280,13 +280,13 @@ dry_run() {
   echo -e "  ${CYAN}CLAUDE_INTEGRATION_GUIDE.md${NC}  ${YELLOW}← 덮어쓰기${NC}"
   echo ""
   echo -e "  ${CYAN}docs/${NC}"
-  echo -e "    README.md (9개)  ${YELLOW}← 덮어쓰기${NC}"
+  echo -e "    README.md (8개)  ${YELLOW}← 덮어쓰기${NC}"
   if [[ "$RESET_CONTEXT" == true ]]; then
     echo -e "    context/ (4개)   ${YELLOW}← 클린 템플릿으로 초기화 (--reset-context)${NC}"
   else
     echo -e "    context/ (4개)   ${GREEN}← 기존 유지, 없는 것만 생성${NC}"
   fi
-  echo "    folders (9개)    ← 생성 (기존 콘텐츠 유지)"
+  echo "    folders (8개)    ← 생성 (기존 콘텐츠 유지)"
   echo ""
 }
 

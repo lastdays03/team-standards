@@ -14,7 +14,7 @@
 
 ## Completed (최근)
 - docs/dev/ 통합 (dev/ → docs/dev/ 경로 마이그레이션)
-- docs/ 하위 폴더 README 생성 (architecture, dev-guide, research, archive, operations, dev)
+- docs/ 하위 폴더 README 생성 (architecture, dev-guide, archive, operations, dev)
 - 에이전트 MCP 참조 정리 (documentation-architect, auth-route-debugger, frontend-error-fixer, refactor-planner)
 - QWarty 결정 아카이브 (decisions.md → docs/archive/decisions-qwarty.md)
 - settings.json/settings.local.json MCP 설정 제거
