@@ -2,307 +2,174 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Monorepo Structure
+## Repository Purpose
 
-This is a **monorepo** containing both backend (FastAPI) and frontend (Next.js) applications:
+**Advanced Harness** — Claude Code 스킬/에이전트/훅/커맨드 모음 모노레포.
 
-- `backend/` - Python FastAPI backend with PostgreSQL
-- `frontend/` - Next.js 15 frontend with TypeScript and Tailwind CSS
+이 레포는 두 가지 역할을 한다:
+1. **Claude Code 인프라 템플릿**: 스킬(15개), 에이전트(12개), 훅(7개), 커맨드(3개)를 다른 프로젝트에 이식 가능
+2. **실제 작동 앱**: FastAPI 백엔드 + Next.js 15 프론트엔드 (QWarty 프로젝트)
 
-## Backend Development
+## Quick Commands
 
-### Prerequisites
-
-- Python 3.12.3 (exact version, see `backend/pyproject.toml`)
-- Docker & Docker Compose
-
-### Setup
+### Backend
 
 ```bash
 cd backend
-uv venv
-source .venv/bin/activate
-uv pip install -e .
-uv pip install -e .[dev]  # Install dev dependencies (black, isort, mypy, ruff)
+uv venv && source .venv/bin/activate
+uv pip install -e .[dev]
+uvicorn backend.main:app --reload --port 28080  # 주의: backend.main (app.main 아님)
 ```
-
-### Running the Backend
 
 ```bash
-# Development server (note: module is backend.main not app.main)
+# Code quality
 cd backend
-uvicorn backend.main:app --reload --port 28080
-
-# Docker Compose (production-like environment)
-cd backend
-docker-compose up
+black . && isort . --profile black && ruff check --fix . && mypy .
+pre-commit run --all-files
 ```
-
-### Code Quality
 
 ```bash
+# Tests (asyncio_mode=auto)
 cd backend
-black .                           # Format code
-isort . --profile black          # Sort imports
-ruff check --fix .               # Lint with auto-fix
-mypy .                           # Type checking
-pre-commit run --all-files       # Run all pre-commit hooks
+pytest                          # 전체
+pytest tests/test_specific.py   # 단일 파일
+pytest -k "test_name"           # 이름 매칭
 ```
 
-### Backend Architecture
-
-**Framework:** FastAPI with async/await pattern using SQLModel + SQLAlchemy
-
-**Database Layer:**
-
-- **Read/Write Separation**: Separate database connections for read and write operations
-- Event loop-based caching of engines and sessionmakers in `backend/db/orm.py`
-- Session factories:
-  - `get_write_session()` / `get_write_session_dependency()` for write operations
-  - `get_read_session()` / `get_read_session_dependency()` for read operations
-- PostgreSQL with asyncpg driver, SSL required for connections
-
-**Domain-Driven Design:**
-
-- Business logic organized in `backend/domain/{entity}/` directories
-- Each domain contains: `model.py` (SQLModel), `service.py` (business logic), `repository.py` (data access)
-- Domains: `user`, `auth`, `artist`, `artwork`, `admin`, `curai`, `exhibition`, `message`, `notification`, `subscription`, `shared`
-
-**API Structure:**
-
-- Versioned endpoints under `/api/v1/` prefix
-- Routers in `backend/api/v1/routers/`: `auth.py`, `artist.py`, `artwork.py`, `admin.py`, `curai.py`, `exhibition.py`, `message.py`, `notification.py`, `health.py`
-- DTOs in `backend/dtos/` for request/response validation
-- Main app creation in `backend/main.py` via `create_application()`
-
-**Configuration:**
-
-- Settings in `backend/core/config.py` using Pydantic BaseSettings
-- Environment variables required: database credentials (read/write), JWT config
-- CORS configured for local development and production domains (qwarty.net)
-
-**Deployment:**
-
-- Docker image: `206404754787.dkr.ecr.ap-northeast-2.amazonaws.com/qwarty-backend:latest`
-- Deployed to AWS ECS cluster `qwarty-backend-cluster`
-- Auto-deployment on push to `main` branch via GitHub Actions
-
-## Frontend Development
-
-### Prerequisites
-
-- Node.js 20+
-- pnpm package manager
-
-### Setup
+### Frontend
 
 ```bash
 cd frontend
 pnpm install
+pnpm dev          # Turbopack dev server (localhost:3000)
+pnpm build        # Production build
+pnpm lint         # ESLint
 ```
-
-### Running the Frontend
 
 ```bash
+# E2E tests (Playwright)
 cd frontend
-pnpm dev          # Development server with Turbopack (http://localhost:3000)
-pnpm build        # Production build with Turbopack
-pnpm start        # Start production server
-pnpm lint         # Run ESLint
+pnpm exec playwright test
+pnpm exec playwright test tests/specific.spec.ts  # 단일 파일
 ```
-
-### Frontend Architecture
-
-**Framework:** Next.js 15 (App Router) with React 19, TypeScript, Tailwind CSS 4
-
-**Project Structure:**
-
-- `src/app/` - Next.js App Router pages and API routes
-  - Route groups: `/login`, `/sign-up`, `/artists`, `/artist`, `/account`, `/admin`, `/agent`, `/explore`, `/messages`, `/search`
-  - API routes: `/api/upload` (S3 file upload)
-- `src/components/` - Reusable React components organized by feature
-- `src/lib/` - Core utilities and configurations
-  - `api.ts` - API client for backend communication
-  - `serverAuth.ts` - Server-side authentication utilities
-  - `s3Upload.ts` - AWS S3 upload utilities with compression
-  - `emailAuth.ts` - Email authentication utilities
-  - `firebase.ts` - Firebase configuration
-  - `theme.ts` - MUI theme configuration
-- `src/hooks/` - Custom React hooks
-- `src/providers/` - React context providers
-- `src/utils/` - Utility functions
-- `src/types/` - TypeScript type definitions
-- `src/const/` - Application constants
-- `src/interfaces/` - TypeScript interfaces
-- `src/locales/` - Internationalization (i18n) with next-intl
-
-**Key Technologies:**
-
-- **Styling:** Tailwind CSS 4, MUI Material (components), Emotion (CSS-in-JS)
-- **State Management:** React hooks and context providers
-- **Authentication:** JWT tokens with server-side validation
-- **File Upload:** AWS S3 with client-side compression
-- **Internationalization:** next-intl for i18n support
-- **UI Components:** MUI Material, Lucide React icons
-
-**Configuration:**
-
-- `next.config.ts` - Next.js config with remote image patterns (AWS S3), Turbopack enabled
-- `tailwind.config.ts` - Tailwind CSS 4 configuration
-- `eslint.config.mjs` - ESLint configuration with TypeScript support
-- Environment variables required: API endpoint, Firebase config, AWS credentials, Kakao OAuth
-
-## Development Workflow
-
-### Environment Files
-
-Backend and frontend both require `.env` files:
-
-- `backend/.env` - Database credentials (read/write), JWT config
-- `frontend/.env` - API endpoint, Firebase, AWS S3, Kakao OAuth credentials
-
-### Git Workflow
-
-- Main branch: `main` (protected, auto-deploys backend to AWS ECS)
-- Create feature branches for development
-- Backend deployment triggers automatically on push to `main` via `.github/workflows/deploy-real.yaml`
-  - Builds Docker image and pushes to ECR: `206404754787.dkr.ecr.ap-northeast-2.amazonaws.com/qwarty-backend:latest`
-  - Deploys to ECS service: `prod-apne2-qwarty-backend-svc` in cluster `qwarty-backend-cluster`
-  - Task definition: `backend/prod-apne2-qwarty-backend-task-def.json`
-
-### Key Design Patterns
-
-**Backend:**
-
-- Domain-Driven Design with clear separation of concerns
-- Repository pattern for data access
-- DTO pattern for API contracts
-- Dependency injection via FastAPI's `Depends()`
-- Async/await throughout with proper session management
-
-**Frontend:**
-
-- Server-side rendering (SSR) with App Router
-- Client/Server component separation
-- Server actions for API calls
-- Image optimization with S3 upload
-- Responsive design with Tailwind CSSs
-
-### Important Notes
-
-- **Backend module path:** Use `backend.main:app` not `app.main:app` when running uvicorn
-- **Database sessions:** Always use appropriate read/write session factory from `backend/db/orm.py`
-  - Use `get_write_session_dependency()` for FastAPI endpoints that modify data
-  - Use `get_read_session_dependency()` for FastAPI endpoints that only read data
-- **Frontend API calls:** Centralized in `src/lib/api.ts`
-- **Image uploads:** S3 upload uses presigned POST URLs for direct client-side upload
-  - Flow: Client → Backend (`POST /api/v1/upload/presigned-url`) → Backend generates presigned POST → Client uploads directly to S3
-  - Backend: `backend/utils/s3.py` - `generate_presigned_post()` creates presigned POST with fields and conditions (max 50MB)
-  - Frontend: `src/lib/s3Upload.ts` - Handles compression (browser-image-compression), presigned URL request, and S3 upload
-  - Images are compressed client-side to WebP format before upload (optional, depending on function used)
-  - Supports thumbnail generation: uploads both original and compressed thumbnail in parallel
-- **Authentication:** JWT-based, server-side validation in `src/lib/serverAuth.ts`
-- **Pre-commit hooks:** Backend uses black, isort, ruff, and other checks via `.pre-commit-config.yaml`
-
-## Testing & Performance Monitoring
-
-### Browser Testing with Chrome DevTools MCP
-
-**IMPORTANT:** Always use **chrome-devtools MCP** for frontend browser testing and performance measurement. Do NOT manually start the dev server with `pnpm dev` for testing.
-
-**Available MCP Tools:**
-
-- `mcp__chrome-devtools__navigate_page` - Navigate to URL
-- `mcp__chrome-devtools__take_snapshot` - Take page snapshot (structure)
-- `mcp__chrome-devtools__take_screenshot` - Take screenshot
-- `mcp__chrome-devtools__click` - Click elements
-- `mcp__chrome-devtools__fill` - Fill form inputs
-- `mcp__chrome-devtools__list_console_messages` - Check console errors
-- `mcp__chrome-devtools__list_network_requests` - Monitor API calls
-- `mcp__chrome-devtools__performance_start_trace` - Start performance recording
-- `mcp__chrome-devtools__performance_stop_trace` - Stop and analyze performance
-
-### Performance Testing Workflow
-
-**Step 1: Start Dev Server in Background**
-If chrome-devtools MCP is alreay running, kill it first.
-using chrome-devtools MCP, start dev server in background
-
-**Step 2: Run Browser Tests with chrome-devtools MCP**
-
-```typescript
-// Example test flow:
-1. Navigate to page: mcp__chrome-devtools__navigate_page({ url: "http://localhost:3000/ko" })
-2. Take snapshot: mcp__chrome-devtools__take_snapshot({ verbose: false })
-3. Check console: mcp__chrome-devtools__list_console_messages()
-4. Start performance trace: mcp__chrome-devtools__performance_start_trace({ reload: true, autoStop: true })
-5. Analyze results: Review LCP, FCP, TTI, CLS metrics
-6. Take screenshot: mcp__chrome-devtools__take_screenshot({ fullPage: true })
-```
-
-**Step 3: Measure Core Web Vitals**
-
-- **LCP (Largest Contentful Paint):** Target <2000ms
-- **FCP (First Contentful Paint):** Target <1000ms
-- **CLS (Cumulative Layout Shift):** Target <0.1
-- **TTI (Time to Interactive):** Target <2500ms
-- **TBT (Total Blocking Time):** Target <300ms
-
-### Test Documentation
-
-**Test Plans and Reports:**
-
-- `frontend/tests/browser/` - Browser test documentation
-- `frontend/tests/browser/test-reports/` - Test execution reports
-- `frontend/docs/performance-baseline.md` - Performance baseline metrics
-- `frontend/docs/PERFORMANCE-DASHBOARD.md` - Performance dashboard
-
-**Test Coverage:**
-
-- Home page tests (8 tests)
-- Artists page tests (10 tests)
-- SearchBar component tests (20 tests)
-- Total: 38 automated test cases
-
-### Lighthouse CI (Automated Performance Regression Testing)
-
-**Configuration:** `.lighthouserc.js` in frontend directory
-**GitHub Actions:** `.github/workflows/lighthouse-ci.yaml`
-
-**Manual Lighthouse CI Run:**
 
 ```bash
+# Lighthouse CI
 cd frontend
-pnpm build
-npx lhci autorun
+pnpm build && npx lhci autorun
 ```
 
-### Example: Testing Home Page
+### Claude Code 설정 설치 (다른 프로젝트에)
 
 ```bash
-# 1. Ensure backend is running
-cd backend
-uvicorn backend.main:app --reload --port 28080
-
-# 2. Start frontend dev server
-cd frontend
-pnpm dev
-
-# 3. Use chrome-devtools MCP tools to:
-# - Navigate to http://localhost:3000/ko
-# - Take snapshot to verify structure
-# - Check console messages (expect 0 errors)
-# - Start performance trace with reload
-# - Review Core Web Vitals
-# - Take screenshots for documentation
-# - Compare with baseline (frontend/docs/performance-baseline.md)
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install-claude-env.sh | bash
+curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scripts/install-claude-env.sh | bash -s -- ~/target-project
 ```
 
-## AI Agent System (Curai)
+## Monorepo Structure
 
-**Framework:** Pydantic AI with streaming SSE responses
+```
+.claude/
+  agents/       # 12 autonomous agents (auth-route-debugger, code-refactor-master, planner, etc.)
+  commands/     # 3 slash commands (/dev-docs, /dev-docs-update, /route-research-for-testing)
+  hooks/        # 7 hooks (skill-activation-prompt, post-tool-use-tracker, tsc-check, etc.)
+  skills/       # 15 skills + skill-rules.json (auto-activation config)
+  settings.json # Hook bindings & permissions
+backend/        # Python 3.12.3, FastAPI, SQLModel, PostgreSQL
+frontend/       # Next.js 15, React 19, TypeScript, Tailwind CSS 4, shadcn/ui
+scripts/        # install-claude-env.sh (설정만 타 프로젝트에 이식)
+dev/
+  active/       # 진행 중인 작업 계획 (/dev-docs로 생성)
+  done/         # 완료된 작업 아카이브
+```
 
-**Architecture:**
+## Claude Code Infrastructure
 
-- Thread-based conversations with message history persistence
-- Agentic search using pre-defined DB tools
+### Skills Auto-Activation
+
+스킬은 `.claude/skills/skill-rules.json`의 트리거 규칙에 따라 자동 활성화된다. `skill-activation-prompt` 훅(UserPromptSubmit)이 사용자 프롬프트와 파일 컨텍스트를 매칭하여 관련 스킬을 주입한다.
+
+주요 스킬:
+- `fastapi-backend-guidelines` — DDD, SQLModel, async/await 패턴
+- `nextjs-frontend-guidelines` — App Router, shadcn/ui, Tailwind CSS 4, 한국어 i18n
+- `pytest-backend-testing` — FastAPI 테스트 패턴 (유닛/통합/비동기/목킹)
+- `skill-developer` — 새 스킬 생성 메타가이드 (트리거, 훅, 500줄 룰)
+- `error-tracking` — Sentry v8 통합 패턴
+
+### Slash Commands
+
+- `/dev-docs <설명>` — `dev/active/{task-name}/`에 plan/context/tasks 문서 구조 생성
+- `/dev-docs-update` — 컨텍스트 컴팩션 전 진행 상태 업데이트, 완료 작업 아카이브
+- `/route-research-for-testing` — 편집된 라우트 자동 감지 후 auth-route-tester로 테스트
+
+### Hooks
+
+- **UserPromptSubmit**: `skill-activation-prompt` — 스킬 자동 활성화
+- **PostToolUse**: `post-tool-use-tracker` — Edit/Write/MultiEdit 추적
+- **Stop**: `tsc-check`, `trigger-build-resolver` — TypeScript 컴파일 검증 및 에러 자동 수정
+
+### Agents
+
+에이전트는 `.claude/agents/*.md`에 정의된 자율 실행 서브태스크 전문가. 주요:
+- `planner` / `plan-reviewer` — 개발 계획 수립 및 리뷰
+- `code-architecture-reviewer` — 아키텍처 일관성/품질 리뷰
+- `code-refactor-master` — 종합 리팩토링 (파일 재구성, 의존성 추적)
+- `auth-route-tester` / `auth-route-debugger` — JWT 인증 라우트 테스트/디버깅
+- `frontend-error-fixer` — 빌드타임/런타임 프론트엔드 에러 진단
+- `web-research-specialist` — GitHub Issues, Reddit, SO 기술 리서치
+
+## Backend Architecture
+
+**Framework:** FastAPI + SQLModel + SQLAlchemy (async/await, asyncpg)
+
+**Database — Read/Write Separation:**
+- `backend/db/orm.py`에서 이벤트 루프별 엔진/세션 캐싱
+- 쓰기: `get_write_session()` / `get_write_session_dependency()`
+- 읽기: `get_read_session()` / `get_read_session_dependency()`
+- PostgreSQL + asyncpg, 비개발 환경 SSL 필수
+
+**Domain-Driven Design:**
+- `backend/domain/{entity}/` — model.py (SQLModel), service.py, repository.py
+- 도메인: user, auth, artist, artwork, admin, curai, exhibition, message, notification, subscription, shared
+- API: `/api/v1/` 프리픽스, 라우터는 `backend/api/v1/routers/`
+- DTO: `backend/dtos/` (Pydantic 기반 request/response)
+- 앱 생성: `backend/main.py` → `create_application()`
+
+**AI Agent (Curai):** Pydantic AI, SSE 스트리밍, 스레드 기반 대화 + DB 도구 검색
+
+## Frontend Architecture
+
+**Framework:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4
+
+**핵심 파일:**
+- `src/lib/api.ts` — 백엔드 API 클라이언트 (모든 API 호출 여기 집중)
+- `src/lib/serverAuth.ts` — 서버사이드 JWT 인증
+- `src/lib/s3Upload.ts` — S3 presigned POST + 클라이언트 WebP 압축 + 썸네일
+
+**S3 업로드 플로우:**
+Client → `POST /api/v1/upload/presigned-url` → presigned POST 생성 → 클라이언트가 S3 직접 업로드 (최대 50MB)
+
+**i18n:** next-intl, 로케일은 `src/locales/`
+
+## Deployment
+
+- Backend: AWS ECS (`qwarty-backend-cluster`), main 브랜치 push 시 GitHub Actions 자동 배포
+  - ECR: `206404754787.dkr.ecr.ap-northeast-2.amazonaws.com/qwarty-backend:latest`
+  - Task def: `backend/prod-apne2-qwarty-backend-task-def.json`
+- Workflow: `.github/workflows/deploy-real.yaml`
+
+## Critical Gotchas
+
+- **Backend 모듈 경로**: `uvicorn backend.main:app` (~~app.main:app~~ 아님)
+- **DB 세션 선택**: 읽기 전용 엔드포인트는 반드시 `get_read_session_dependency()` 사용
+- **프론트엔드 API**: 반드시 `src/lib/api.ts` 경유, 직접 fetch 금지
+- **이미지 업로드**: S3 presigned POST 방식, 클라이언트 사이드 압축 후 업로드
+- **성능 기준**: LCP <2000ms, FCP <1000ms, CLS <0.1, TTI <2500ms, TBT <300ms
+- **Pre-commit**: backend에서 black, isort, ruff, mypy 자동 실행 (`.pre-commit-config.yaml`)
+
+## MCP Servers (.mcp.json)
+
+- `playwright` — E2E 테스트 및 비디오 녹화
+- `remotion-documentation` — 비디오 생성 프레임워크 문서
+- `elevenlabs` — TTS API
+- `replicate` — 이미지 생성 API

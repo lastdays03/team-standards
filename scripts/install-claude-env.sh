@@ -71,13 +71,6 @@ cp "$SRC_DIR/CLAUDE.md" "$TARGET_DIR/CLAUDE.md"
 # CLAUDE_INTEGRATION_GUIDE.md
 cp "$SRC_DIR/CLAUDE_INTEGRATION_GUIDE.md" "$TARGET_DIR/CLAUDE_INTEGRATION_GUIDE.md"
 
-# .mcp.json (있으면 백업)
-if [[ -f "$TARGET_DIR/.mcp.json" ]]; then
-  echo "Backing up existing .mcp.json → .mcp.json.bak"
-  cp "$TARGET_DIR/.mcp.json" "$TARGET_DIR/.mcp.json.bak"
-fi
-cp "$SRC_DIR/.mcp.json" "$TARGET_DIR/.mcp.json"
-
 # --- 결과 ---
 echo ""
 echo "Done! Claude Code environment installed to: $TARGET_DIR"
@@ -90,9 +83,7 @@ echo "  .claude/skills/      (20+ skills)"
 echo "  .claude/settings.json"
 echo "  CLAUDE.md"
 echo "  CLAUDE_INTEGRATION_GUIDE.md"
-echo "  .mcp.json"
 echo ""
 echo "Next steps:"
 echo "  1. CLAUDE.md를 프로젝트 기술 스택에 맞게 수정"
-echo "  2. .mcp.json에서 필요한 MCP 서버만 남기기"
-echo "  3. .claude/skills/skill-rules.json에서 불필요한 스킬 비활성화"
+echo "  2. .claude/skills/skill-rules.json에서 불필요한 스킬 비활성화"
