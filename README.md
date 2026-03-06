@@ -59,7 +59,7 @@ docs/context/
 
 | 에이전트 | 설명 | 범용성 |
 |---------|------|--------|
-| `planner` | `docs/dev/active/`에 구조화된 개발 계획(plan/context/tasks) 생성 | 범용 |
+| `planner` | `docs/plans/active/`에 구조화된 개발 계획(plan/context/tasks) 생성 | 범용 |
 | `plan-reviewer` | 구현 전 개발 계획 리뷰 — 리스크 평가, 갭 분석 | 범용 |
 | `code-architecture-reviewer` | 코드 품질, 아키텍처 일관성, 시스템 통합 리뷰 | 범용 |
 | `code-refactor-master` | 파일 재구성, 의존성 추적, 컴포넌트 추출 등 종합 리팩토링 | 범용 |
@@ -75,7 +75,7 @@ docs/context/
 
 | 커맨드 | 설명 |
 |--------|------|
-| `/dev-docs` | `docs/dev/active/{task-name}/`에 plan/context/tasks 3파일 구조 생성 |
+| `/dev-docs` | `docs/plans/active/{task-name}/`에 plan/context/tasks 3파일 구조 생성 |
 | `/dev-docs-update` | 컨텍스트 컴팩션 전 진행 상태 업데이트, 완료 작업 아카이브 |
 | `/route-research-for-testing` | 편집된 라우트 자동 감지 후 auth-route-tester로 테스트 |
 
@@ -137,8 +137,7 @@ install-claude-env.sh [options] [target-path]
   settings.json     # Hook bindings & permissions
 docs/
   context/          # 세션 운영 (상태/결정/핸드오프/규칙)
-  planning/         # 기획 문서 + 리서치 보고서 (PLAN-*.md, REPORT-*.md)
-  dev/              # 구현 계획 (How) — /dev-docs로 생성
+  plans/            # 기획 + 구현 통합 (active/, reports/, done/)
   architecture/     # 시스템 아키텍처
   operations/       # 팀 협업 프로세스
   dev-guide/        # 개발자 가이드

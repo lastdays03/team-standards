@@ -53,7 +53,7 @@ When creating your refactoring plan, you will:
   - Success Metrics
 
 - **Save the plan** in an appropriate location within the project structure, typically:
-  - `docs/dev/active/[feature-name]-refactor/` for feature-specific refactoring (via /dev-docs)
+  - `docs/plans/active/[feature-name]-refactor/` for feature-specific refactoring (via /dev-docs)
   - `docs/architecture/[system-name]-refactor-plan.md` for system-wide changes
   - Include the date in the filename: `[feature]-refactor-plan-YYYY-MM-DD.md`
 

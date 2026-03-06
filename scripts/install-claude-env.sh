@@ -144,9 +144,9 @@ install_claude_env() {
   info "docs/ structure"
   local docs_dirs=(
     "docs/context"
-    "docs/planning/completed"
-    "docs/dev/active"
-    "docs/dev/done"
+    "docs/plans/active"
+    "docs/plans/reports"
+    "docs/plans/done"
     "docs/architecture"
     "docs/operations"
     "docs/dev-guide"
@@ -158,7 +158,7 @@ install_claude_env() {
   done
 
   # .gitkeep (빈 디렉토리 git 추적용)
-  for dir in "docs/dev/active" "docs/dev/done" "docs/planning/completed"; do
+  for dir in "docs/plans/active" "docs/plans/reports" "docs/plans/done"; do
     touch "$TARGET_DIR/$dir/.gitkeep"
   done
 
@@ -166,8 +166,7 @@ install_claude_env() {
   local readme_sources=(
     "docs/README.md"
     "docs/context/README.md"
-    "docs/planning/README.md"
-    "docs/dev/README.md"
+    "docs/plans/README.md"
     "docs/architecture/README.md"
     "docs/operations/README.md"
     "docs/dev-guide/README.md"
@@ -179,7 +178,7 @@ install_claude_env() {
       cp "$SRC_DIR/$readme" "$TARGET_DIR/$readme"
     fi
   done
-  ok "docs/ — 8 folders + READMEs (덮어쓰기)"
+  ok "docs/ — 8 folders + READMEs (덮어쓰기, plans/README.md 포함)"
 
   # ━━━ 4. docs/context/ — 없으면 생성, 있으면 보존 ━━━
   local template_dir="$SRC_DIR/scripts/templates/context"

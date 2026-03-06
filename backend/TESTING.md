@@ -431,8 +431,3 @@ tests/
 See these files for examples:
 - `tests/test_factories.py` - Factory usage examples
 - `tests/unit/domain/test_fixtures.py` - Fixture usage examples
-- `docs/dev/active/backend-service-testing/backend-service-testing-context.md` - Detailed patterns
-
----
-
-**Questions?** Check the plan at `docs/dev/active/backend-service-testing/` or ask the team!

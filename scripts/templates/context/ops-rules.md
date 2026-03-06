@@ -30,8 +30,7 @@
 - 문서가 가이드 초과 시: 세션 종료 전 이전 내용 정리/축소
 
 ## Archive Rules
-- 기획 문서 완료 시: `docs/planning/` → `docs/planning/completed/`로 이동
-- 구현 계획 완료 시: `docs/dev/active/` → `docs/dev/done/`으로 이동
+- 기획/구현 완료 시: `docs/plans/active/{topic}/` → `docs/plans/done/`으로 이동
 - 역할 완료 문서: `docs/archive/`로 이동
 
 ## Handoff Trigger

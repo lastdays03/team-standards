@@ -8,7 +8,7 @@ We're approaching context limits. Please update the development documentation to
 ## Required Updates
 
 ### 1. Update Active Task Documentation
-For each task in `/docs/dev/active/`:
+For each task in `/docs/plans/active/`:
 - Update `[task-name]-context.md` with:
   - Current implementation state
   - Key decisions made this session
@@ -44,15 +44,14 @@ Include any relevant information about:
 - Any temporary workarounds that need permanent fixes
 
 ### 5. Archive Completed Tasks
-For tasks in `/docs/dev/active/` where ALL checklist items in `*-tasks.md` are marked ✅:
-- Move the entire `docs/dev/active/{task-name}/` directory to `docs/dev/done/{task-name}/`
-- **연관 기획 문서 자동 이동**: `{task-name}-context.md`의 `## Related Planning Doc` 섹션에 기록된 `docs/planning/` 문서를 `docs/planning/completed/`로 함께 이동
-- Keep `docs/dev/active/` clean — only in-progress tasks should remain
+For tasks in `/docs/plans/active/` where ALL checklist items in `*-tasks.md` are marked ✅:
+- Move the entire `docs/plans/active/{task-name}/` directory to `docs/plans/done/{task-name}/`
+- Keep `docs/plans/active/` clean — only in-progress tasks should remain
 - Do NOT archive if any tasks are still pending or in-progress
 
-### 5-1. Archive Completed Planning & Research Docs
-`docs/planning/`의 독립 문서(`PLAN-*.md`, `REPORT-*.md`) 중 목적이 달성된 문서:
-- 해당 문서를 `docs/planning/completed/`로 이동
+### 5-1. Archive Completed Reports
+`docs/plans/reports/`의 독립 문서(`REPORT-*.md`) 중 목적이 달성된 문서:
+- 해당 문서를 `docs/plans/done/`으로 이동
 - 판단 기준: 문서의 결론이 도출되었고, 후속 작업이 없거나 이미 반영된 경우
 
 ### 6. Create Handoff Notes

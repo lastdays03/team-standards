@@ -42,7 +42,7 @@ team-standards 레포지토리는 Claude Code 스킬/에이전트/훅/커맨드�
 
 | # | 에이전트 | 라인 수 | 역할 | 범용성 |
 |---|---------|---------|------|--------|
-| 1 | planner | 400+ | 구현 계획 수립, docs/dev/ 문서 생성 | ★★★★★ |
+| 1 | planner | 400+ | 구현 계획 수립, docs/plans/ 문서 생성 | ★★★★★ |
 | 2 | plan-reviewer | 300+ | 구현 전 계획 리뷰 | ★★★★★ |
 | 3 | code-architecture-reviewer | 400+ | 코드 품질/아키텍처 리뷰 | ★★★★★ |
 | 4 | code-refactor-master | 500+ | 종합 리팩토링 실행 | ★★★★★ |
@@ -78,7 +78,7 @@ team-standards 레포지토리는 Claude Code 스킬/에이전트/훅/커맨드�
 
 | 커맨드 | 역할 | 범용성 |
 |--------|------|--------|
-| /dev-docs | docs/dev/active/에 plan/context/tasks 3파일 구조 생성 | ★★★★★ |
+| /dev-docs | docs/plans/active/에 plan/context/tasks 3파일 구조 생성 | ★★★★★ |
 | /dev-docs-update | 컨텍스트 컴팩션 전 진행 상태 업데이트 + 완료 아카이브 | ★★★★★ |
 | /route-research-for-testing | 편집된 라우트 감지 후 auth-route-tester 트리거 | ★★★ |
 

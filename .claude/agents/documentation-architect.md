@@ -26,8 +26,8 @@ You are a documentation architect specializing in creating comprehensive, develo
    - `docs/architecture/` — System architecture and design documents
    - `docs/dev-guide/` — Developer guides and checklists
    - `docs/operations/` — Team collaboration processes
-   - `docs/dev/active/` — Implementation plans (via /dev-docs)
-   - `docs/planning/` — Project planning (What/Why)
+   - `docs/plans/active/` — Implementation plans (via /dev-docs)
+   - `docs/plans/reports/` — Independent research reports
    - Feature-local documentation when close-to-code placement is preferred
 
 **Methodology:**
