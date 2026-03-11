@@ -876,6 +876,98 @@
                 ]
             }
         },
+        "area-deep-dive": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Focused deep-dive analysis on a specific codebase area",
+            "promptTriggers": {
+                "keywords": [
+                    "deep dive",
+                    "딥다이브",
+                    "분석해줘",
+                    "코드 분석",
+                    "구조 파악",
+                    "기술부채 찾아줘",
+                    "pre-refactoring",
+                    "리팩토링 전에 분석",
+                    "개선방안",
+                    "백엔드 분석",
+                    "프론트엔드 분석",
+                    "데이터 흐름",
+                    "area analysis"
+                ],
+                "intentPatterns": [
+                    "(analyze|분석|review|리뷰|investigate|조사).*?(backend|frontend|auth|database|api|feature|기능|백엔드|프론트엔드)",
+                    "(backend|frontend|auth|database|api|기능|백엔드|프론트엔드).*?(분석|analyze|review|deep dive)",
+                    "(deep dive|딥다이브).*?(into|에)",
+                    "(구조|structure|architecture).*?(파악|분석|이해|understand)",
+                    "(기술부채|tech.*?debt).*?(찾|find|분석|analyze)",
+                    "(개선|improve|리팩토링 전에|pre-refactor).*?(분석|analysis)"
+                ]
+            }
+        },
+        "project-health-check": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Comprehensive project health check with quality metrics",
+            "promptTriggers": {
+                "keywords": [
+                    "health check",
+                    "건강 점검",
+                    "상태 점검",
+                    "프로젝트 상태",
+                    "코드 품질",
+                    "품질 점검",
+                    "quality check",
+                    "codebase review",
+                    "코드베이스 리뷰",
+                    "기술부채 점검",
+                    "technical debt check",
+                    "project audit",
+                    "프로젝트 감사",
+                    "현재 상태 체크"
+                ],
+                "intentPatterns": [
+                    "(check|점검|확인).*?(health|상태|품질|quality)",
+                    "(프로젝트|project|코드|code).*?(상태|status|어때|how)",
+                    "(run|실행|해줘).*?(health check|점검|audit)",
+                    "(quality|품질).*?(report|보고서|check|점검)",
+                    "(periodic|주기적|정기).*?(check|점검|review)"
+                ]
+            }
+        },
+        "project-report": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Professional project status report for external stakeholders",
+            "promptTriggers": {
+                "keywords": [
+                    "프로젝트 보고서",
+                    "project report",
+                    "현황 보고",
+                    "status report",
+                    "진행 상황 정리",
+                    "progress report",
+                    "성과 정리",
+                    "stakeholder report",
+                    "sprint report",
+                    "milestone report",
+                    "what have we built",
+                    "프로젝트 현황"
+                ],
+                "intentPatterns": [
+                    "(보고서|report).*?(작성|만들|create|generate)",
+                    "(현황|진행|status|progress).*?(보고|정리|report|summary)",
+                    "(stakeholder|투자자|팀장|대표).*?(보고|report|공유)",
+                    "what have we (built|done|achieved)",
+                    "(성과|achievement).*?(정리|summary|보고|report)",
+                    "(공유|share).*?(보고서|report|현황|status)"
+                ]
+            }
+        },
         "cliwant-brand-guidelines": {
             "type": "guardrail",
             "enforcement": "block",

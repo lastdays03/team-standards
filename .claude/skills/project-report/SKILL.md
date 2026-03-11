@@ -1,0 +1,165 @@
+---
+name: project-report
+description: "Generate a polished project status report suitable for external sharing with stakeholders, team leads, or investors. Use this skill when the user asks to create a project report, status update, progress summary, milestone report, or wants to share project progress with others. Also trigger when the user mentions 'stakeholder report', 'progress report', 'project summary', 'sprint report', 'what have we built', '프로젝트 보고서', '진행 상황 정리', '현황 보고', or '성과 정리'. This skill focuses on achievements, architecture, and roadmap rather than internal code details."
+---
+
+# Project Report Generator
+
+Generate a professional project status report for external audiences. This report emphasizes accomplishments, architecture decisions, and forward-looking roadmap — not internal bugs or debt.
+
+**Distinguish from other skills:**
+- **Project report** (this) = external audience, achievements-focused, polished
+- **Health check** = internal, code quality metrics, periodic checkup
+- **Deep dive** = internal, one area in technical detail
+
+## When to Use
+
+- Sharing progress with stakeholders or investors
+- Sprint/milestone retrospective documentation
+- Team onboarding documentation ("what does this project do?")
+- Portfolio/showcase material
+- When someone asks "what have we built?" or "프로젝트 현황 정리해줘"
+
+## Report Generation Process
+
+### Step 0: Read CLAUDE.md
+
+프로젝트의 CLAUDE.md를 먼저 읽어서 다음을 파악:
+- 프로젝트 이름, 목적, 현재 단계
+- 백엔드/프론트엔드 경로 및 테크 스택
+- 테스트/빌드 명령어
+- 문서 디렉토리 구조
+
+### Step 1: Gather Context (run in parallel)
+
+**Project Identity**
+- `CLAUDE.md` — project overview, tech stack, structure
+- `pyproject.toml` / `package.json` — version info
+
+**Development History**
+```bash
+git log --oneline --since="30 days ago" | wc -l        # recent activity
+git log --oneline --all | wc -l                         # total commits
+git shortlog -sn --no-merges | head -5                  # contributors
+git log --oneline --since="30 days ago" | head -20      # recent commit titles
+```
+
+**Completed Work**
+- 완료 문서 디렉토리 (`docs/plans/done/` 등) — 완료된 기능 목록
+- 상태 문서 — 현재 개발 진행 상황
+- 의사결정 문서 — 주요 아키텍처 결정 사항
+
+**Scale Metrics** (CLAUDE.md에서 경로 확인 후 실행)
+```bash
+# Lines of code — CLAUDE.md의 백엔드/프론트엔드 경로 사용
+find {backend_path} -name "*.py" | xargs wc -l 2>/dev/null | tail -1
+find {frontend_path} -name "*.ts" -o -name "*.tsx" | xargs wc -l 2>/dev/null | tail -1
+
+# Test count — CLAUDE.md의 테스트 명령어 사용
+cd {backend_path} && {test_collect_command} 2>&1 | tail -1
+
+# API endpoints — 프레임워크에 맞는 패턴으로 Grep
+# FastAPI: "@router\." / Express: "router\.(get|post)" / Django: "path\("
+
+# DB models — ORM에 맞는 패턴으로 Grep
+# SQLModel: "class.*SQLModel.*table=True" / Prisma: schema.prisma / Django: "models.Model"
+```
+
+**Active Work**
+- `docs/plans/active/` — in-progress features
+- Open PRs: `gh pr list --state open 2>/dev/null`
+
+### Step 2: Compose Report
+
+The report should be scannable in 2 minutes. Use tables and lists liberally. Write for someone who may not be a developer.
+
+Save to `docs/plans/reports/REPORT-project-status-{YYYY-MM-DD}.md`:
+
+```markdown
+# {Project Name} — Project Status Report
+
+> **Date:** {date}
+> **Version:** {version or phase}
+> **Period:** {date range or "as of {date}"}
+
+---
+
+## Executive Summary
+
+{2-3 sentences: what the project is, current phase, key highlight. Write for a non-technical reader.}
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | {e.g., FastAPI, PostgreSQL 16, Redis} |
+| Frontend | {e.g., Next.js 16, React 18, Tailwind CSS} |
+| Infrastructure | {e.g., Docker Compose, ARQ Worker} |
+| AI/ML | {e.g., OpenAI GPT-4, PGVector, RAG Pipeline} |
+
+## Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| Backend Code | {lines} LoC |
+| Frontend Code | {lines} LoC |
+| API Endpoints | {count} |
+| DB Models | {count} |
+| Test Cases | {count} passed |
+| Total Commits | {count} |
+| Contributors | {count} |
+
+## Features Delivered
+
+{Group by domain or milestone. Each feature gets a brief, non-technical description.}
+
+### {Domain/Milestone 1}
+- **{Feature Name}** — {1-line user-facing description}
+- **{Feature Name}** — {1-line description}
+
+### {Domain/Milestone 2}
+- ...
+
+## Architecture Highlights
+
+{2-3 key architectural decisions that define the system. Explain WHY each decision was made, not just WHAT.}
+
+1. **{Decision}** — {rationale and impact}
+2. **{Decision}** — {rationale}
+
+## Current Work
+
+{What's being worked on now. Keep brief.}
+
+| Item | Status | Notes |
+|------|--------|-------|
+| {task} | {in-progress/planned} | {brief} |
+
+## Roadmap
+
+| Priority | Item | Status | Target |
+|----------|------|--------|--------|
+| P0 | {item} | {planned/in-progress} | {timeline if known} |
+| P1 | {item} | {planned} | |
+| P2 | {item} | {planned} | |
+
+## Risks & Dependencies
+
+{Any blockers, external dependencies, or technical risks. Frame constructively.}
+
+- **{Risk}** — {description and mitigation}
+
+---
+
+*Generated by Claude Code on {date}*
+```
+
+## Key Principles
+
+- **Audience-aware**: This goes to non-engineers too. Minimize jargon. "AI-powered legal guidance chatbot" is better than "RAG pipeline with semantic routing over PGVector embeddings". When jargon is unavoidable, add a brief parenthetical explanation.
+- **Achievement-focused**: Lead with what's done, not what's broken. The health check covers problems; this covers progress.
+- **Quantify everything**: "Built 45 API endpoints across 8 feature modules" is more compelling than "built many endpoints". Numbers ground the report and show scale.
+- **Honest about risks**: Don't hide problems, but frame them constructively. "Database migration strategy needed for production deploy" not "production is broken".
+- **Visual structure**: Use tables and lists liberally. Dense paragraphs lose busy readers.
+- **Concise**: The entire report should be scannable in 2 minutes. If a section runs long, summarize and move details to an appendix.
+- **Derive features from done/ folder**: Each completed folder in `docs/plans/done/` represents a shipped feature. Use the PLAN files inside to understand what was delivered and write user-facing descriptions.
