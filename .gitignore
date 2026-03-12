@@ -16,6 +16,9 @@
 
 .playwright-mcp
 
+# Claude Code runtime cache
+.claude/tsc-cache/
+
 # Created by https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,vim,python,jupyternotebooks
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,visualstudiocode,vim,python,jupyternotebooks
 

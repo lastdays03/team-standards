@@ -16,7 +16,20 @@ Agents are autonomous Claude instances that handle specific complex tasks. Unlik
 
 ---
 
-## Available Agents (10)
+## Available Agents (7)
+
+### planner
+**Purpose:** 개발 계획 수립 — 리팩토링 계획 포함 (Refactor Mode)
+
+**When to use:**
+- 새 기능 개발 계획 수립
+- 리팩토링 전략 및 실행 계획
+- 복잡한 변경의 단계별 계획
+- 기술 부채 해소 계획
+
+**Integration:** ✅ Copy as-is
+
+---
 
 ### code-architecture-reviewer
 **Purpose:** Review code for architectural consistency and best practices
@@ -83,57 +96,6 @@ Agents are autonomous Claude instances that handle specific complex tasks. Unlik
 
 ---
 
-### refactor-planner
-**Purpose:** Create comprehensive refactoring strategies
-
-**When to use:**
-- Planning code reorganization
-- Modernizing legacy code
-- Breaking down large files
-- Improving code structure
-
-**Integration:** ✅ Copy as-is
-
----
-
-### web-research-specialist
-**Purpose:** Research technical issues online
-
-**When to use:**
-- Debugging obscure errors
-- Finding solutions to problems
-- Researching best practices
-- Comparing implementation approaches
-
-**Integration:** ✅ Copy as-is
-
----
-
-### auth-route-tester
-**Purpose:** Test authenticated API endpoints
-
-**When to use:**
-- Testing routes with JWT cookie auth
-- Validating endpoint functionality
-- Debugging authentication issues
-
-**Integration:** ⚠️ Requires JWT cookie-based auth
-
----
-
-### auth-route-debugger
-**Purpose:** Debug authentication issues
-
-**When to use:**
-- Auth failures
-- Token issues
-- Cookie problems
-- Permission errors
-
-**Integration:** ⚠️ Requires JWT cookie-based auth
-
----
-
 ### auto-error-resolver
 **Purpose:** Automatically fix TypeScript compilation errors
 
@@ -176,11 +138,6 @@ That's it! Agents work immediately.
 - Ask user: "Where should screenshots be saved?"
 - Update paths in agent file
 
-**auth-route-tester / auth-route-debugger:**
-- Require JWT cookie authentication
-- Update service URLs from examples
-- Customize for user's auth setup
-
 **auto-error-resolver:**
 - May have hardcoded project paths
 - Update to use `$CLAUDE_PROJECT_DIR` or relative paths
@@ -207,15 +164,12 @@ That's it! Agents work immediately.
 
 | Agent | Complexity | Customization | Auth Required |
 |-------|-----------|---------------|---------------|
+| planner | Medium | ✅ None | No |
+| plan-reviewer | Low | ✅ None | No |
 | code-architecture-reviewer | Medium | ✅ None | No |
 | code-refactor-master | High | ✅ None | No |
 | documentation-architect | Medium | ✅ None | No |
 | frontend-error-fixer | Medium | ⚠️ Screenshot paths | No |
-| plan-reviewer | Low | ✅ None | No |
-| refactor-planner | Medium | ✅ None | No |
-| web-research-specialist | Low | ✅ None | No |
-| auth-route-tester | Medium | ⚠️ Auth setup | JWT cookies |
-| auth-route-debugger | Medium | ⚠️ Auth setup | JWT cookies |
 | auto-error-resolver | Low | ⚠️ Paths | No |
 
 ---
@@ -231,7 +185,6 @@ That's it! Agents work immediately.
    grep "~/git/\|/root/" agent-name.md
    ```
 4. **Update paths if found** to `$CLAUDE_PROJECT_DIR` or `.`
-5. **For auth agents:** Ask if they use JWT cookie auth first
 
 **That's it!** Agents are the easiest components to integrate.
 

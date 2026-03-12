@@ -1,0 +1,9 @@
+{
+  "tool_name": "Edit",
+  "session_id": "smoke-test",
+  "tool_input": {
+    "file_path": "/project/frontend/src/components/Button.tsx",
+    "old_string": "export default Button",
+    "new_string": "export default Button;"
+  }
+}

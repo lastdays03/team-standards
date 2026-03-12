@@ -3,10 +3,10 @@ name: error-tracking
 description: Add Sentry v8 error tracking and performance monitoring to your project services. Use this skill when adding error handling, creating new controllers, instrumenting cron jobs, or tracking database performance. ALL ERRORS MUST BE CAPTURED TO SENTRY - no exceptions.
 ---
 
-# your project Sentry Integration Skill
+# Sentry v8 Error Tracking Skill
 
 ## Purpose
-This skill enforces comprehensive Sentry error tracking and performance monitoring across all your project services following Sentry v8 patterns.
+This skill enforces comprehensive Sentry v8 error tracking and performance monitoring across project services.
 
 ## When to Use This Skill
 - Adding error handling to any code
@@ -19,18 +19,6 @@ This skill enforces comprehensive Sentry error tracking and performance monitori
 ## 🚨 CRITICAL RULE
 
 **ALL ERRORS MUST BE CAPTURED TO SENTRY** - No exceptions. Never use console.error alone.
-
-## Current Status
-
-### Form Service ✅ Complete
-- Sentry v8 fully integrated
-- All workflow errors tracked
-- SystemActionQueueProcessor instrumented
-- Test endpoints available
-
-### Email Service 🟡 In Progress
-- Phase 1-2 complete (6/22 tasks)
-- 189 ErrorLogger.log() calls remaining
 
 ## Sentry Integration Patterns
 
@@ -69,19 +57,22 @@ router.get('/route', async (req, res) => {
 });
 ```
 
-### 3. Workflow Error Handling
+### 3. Domain-Specific Error Handling
 
 ```typescript
-import { WorkflowSentryHelper } from '../workflow/utils/sentryHelper';
+import * as Sentry from '@sentry/node';
 
-// ✅ CORRECT - Use WorkflowSentryHelper
-WorkflowSentryHelper.captureWorkflowError(error, {
-    workflowCode: 'DHS_CLOSEOUT',
-    instanceId: 123,
-    stepId: 456,
-    userId: 'user-123',
-    operation: 'stepCompletion',
-    metadata: { additionalInfo: 'value' }
+// ✅ CORRECT - Capture with domain context
+Sentry.captureException(error, {
+    tags: {
+        domain: 'your-domain',
+        operation: 'operationName',
+    },
+    extra: {
+        entityId: 123,
+        userId: 'user-123',
+        metadata: { additionalInfo: 'value' }
+    }
 });
 ```
 
@@ -131,18 +122,16 @@ main()
 ### 5. Database Performance Monitoring
 
 ```typescript
-import { DatabasePerformanceMonitor } from '../utils/databasePerformance';
+import * as Sentry from '@sentry/node';
 
-// ✅ CORRECT - Wrap database operations
-const result = await DatabasePerformanceMonitor.withPerformanceTracking(
-    'findMany',
-    'UserProfile',
-    async () => {
-        return await PrismaService.main.userProfile.findMany({
-            take: 5,
-        });
-    }
-);
+// ✅ CORRECT - Wrap database operations with Sentry spans
+const result = await Sentry.startSpan({
+    name: 'db.findMany',
+    op: 'db.query',
+    attributes: { 'db.table': 'YourModel' }
+}, async () => {
+    return await db.yourModel.findMany({ take: 5 });
+});
 ```
 
 ### 6. Async Operations with Spans
@@ -180,13 +169,12 @@ import * as Sentry from '@sentry/node';
 Sentry.withScope((scope) => {
     // ALWAYS include these if available
     scope.setUser({ id: userId });
-    scope.setTag('service', 'form'); // or 'email', 'users', etc.
+    scope.setTag('service', 'your-service-name');
     scope.setTag('environment', process.env.NODE_ENV);
 
     // Add operation-specific context
     scope.setContext('operation', {
-        type: 'workflow.start',
-        workflowCode: 'DHS_CLOSEOUT',
+        type: 'operation.type',
         entityId: 123
     });
 
@@ -194,11 +182,9 @@ Sentry.withScope((scope) => {
 });
 ```
 
-## Service-Specific Integration
+## Sentry Initialization Template
 
-### Form Service
-
-**Location**: `./blog-api/src/instrument.ts`
+**Location**: `src/instrument.ts` (must be imported as the very first line in your entry point)
 
 ```typescript
 import * as Sentry from '@sentry/node';
@@ -214,34 +200,6 @@ Sentry.init({
     profilesSampleRate: 0.1,
 });
 ```
-
-**Key Helpers**:
-- `WorkflowSentryHelper` - Workflow-specific errors
-- `DatabasePerformanceMonitor` - DB query tracking
-- `BaseController` - Controller error handling
-
-### Email Service
-
-**Location**: `./notifications/src/instrument.ts`
-
-```typescript
-import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
-
-Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV || 'development',
-    integrations: [
-        nodeProfilingIntegration(),
-    ],
-    tracesSampleRate: 0.1,
-    profilesSampleRate: 0.1,
-});
-```
-
-**Key Helpers**:
-- `EmailSentryHelper` - Email-specific errors
-- `BaseController` - Controller error handling
 
 ## Configuration (config.ini)
 
@@ -262,33 +220,27 @@ enableN1Detection = true
 
 ## Testing Sentry Integration
 
-### Form Service Test Endpoints
+Add test endpoints to verify Sentry is working:
 
 ```bash
 # Test basic error capture
-curl http://localhost:3002/blog-api/api/sentry/test-error
-
-# Test workflow error
-curl http://localhost:3002/blog-api/api/sentry/test-workflow-error
-
-# Test database performance
-curl http://localhost:3002/blog-api/api/sentry/test-database-performance
-
-# Test error boundary
-curl http://localhost:3002/blog-api/api/sentry/test-error-boundary
-```
-
-### Email Service Test Endpoints
-
-```bash
-# Test basic error capture
-curl http://localhost:3003/notifications/api/sentry/test-error
-
-# Test email-specific error
-curl http://localhost:3003/notifications/api/sentry/test-email-error
+curl http://localhost:<port>/api/sentry/test-error
 
 # Test performance tracking
-curl http://localhost:3003/notifications/api/sentry/test-performance
+curl http://localhost:<port>/api/sentry/test-performance
+```
+
+Example test route:
+
+```typescript
+router.get('/api/sentry/test-error', async (req, res) => {
+    try {
+        throw new Error('Sentry test error');
+    } catch (error) {
+        Sentry.captureException(error);
+        res.status(500).json({ message: 'Test error sent to Sentry' });
+    }
+});
 ```
 
 ## Performance Monitoring
@@ -344,32 +296,14 @@ When adding Sentry to new code:
 - [ ] Tested error handling paths
 - [ ] For cron jobs: instrument.ts imported first
 
-## Key Files
+## Key Files (per service)
 
-### Form Service
-- `/blog-api/src/instrument.ts` - Sentry initialization
-- `/blog-api/src/workflow/utils/sentryHelper.ts` - Workflow errors
-- `/blog-api/src/utils/databasePerformance.ts` - DB monitoring
-- `/blog-api/src/controllers/BaseController.ts` - Controller base
-
-### Email Service
-- `/notifications/src/instrument.ts` - Sentry initialization
-- `/notifications/src/utils/EmailSentryHelper.ts` - Email errors
-- `/notifications/src/controllers/BaseController.ts` - Controller base
-
-### Configuration
-- `/blog-api/config.ini` - Form service config
-- `/notifications/config.ini` - Email service config
-- `/sentry.ini` - Shared Sentry config
-
-## Documentation
-
-- Full implementation: `/docs/plans/active/email-sentry-integration/`
-- Form service docs: `/blog-api/docs/sentry-integration.md`
-- Email service docs: `/notifications/docs/sentry-integration.md`
+- `src/instrument.ts` - Sentry initialization (imported first in entry point)
+- `src/controllers/BaseController.ts` - Controller base with error handling
+- `src/utils/sentryHelper.ts` - Domain-specific error helpers
+- `config.ini` or `.env` - Sentry DSN and sampling configuration
 
 ## Related Skills
 
-- Use **database-verification** before database operations
-- Use **workflow-builder** for workflow error context
-- Use **database-scripts** for database error handling
+- Use **fastapi-backend-guidelines** or **nextjs-frontend-guidelines** for framework-specific error handling patterns
+- Use **pytest-backend-testing** for testing error handling paths

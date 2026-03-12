@@ -213,6 +213,24 @@ Before saving, verify:
 - Timeline is realistic
 - All 3 files created in docs/plans/active/[task-name]/
 
+## Refactor Mode
+
+When Scope is "Refactor", add these additional analysis steps:
+
+### Refactoring Analysis Checklist
+- **Code Smells**: long methods, large classes, feature envy, data clumps, primitive obsession
+- **SOLID Violations**: single responsibility breaches, tight coupling, interface segregation issues
+- **Duplication**: repeated patterns across files, copy-paste code, similar logic in multiple locations
+- **Modernization**: outdated patterns, deprecated APIs, legacy conventions
+- **Naming & Readability**: inconsistent conventions, unclear abstractions, misleading names
+
+### Refactoring Risk Categories
+In Risk Assessment, additionally document:
+- **Breaking Changes**: components affected, integration points at risk
+- **Rollback Strategy**: per-phase rollback steps (not just overall)
+- **Performance Implications**: expected changes in memory, latency, bundle size
+- **Issue Severity**: categorize as critical / major / minor and by type (structural / behavioral / naming)
+
 ## Important Rules
 
 1. **NEVER implement code** - only create plan documents

@@ -1,0 +1,8 @@
+{
+  "tool_name": "Write",
+  "session_id": "smoke-test",
+  "tool_input": {
+    "file_path": "/project/frontend/src/lib/utils.ts",
+    "content": "export const noop = () => {}"
+  }
+}

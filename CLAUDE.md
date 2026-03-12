@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Advanced Harness** — Claude Code 스킬/에이전트/훅/커맨드 모음 모노레포.
 
 이 레포는 두 가지 역할을 한다:
-1. **Claude Code 인프라 템플릿**: 스킬(14개), 에이전트(11개), 훅(8개), 커맨드(3개)를 다른 프로젝트에 이식 가능
+1. **Claude Code 인프라 템플릿**: 스킬(16개), 에이전트(7개), 훅(2개), 커맨드(2개)를 다른 프로젝트에 이식 가능
 2. **실제 작동 앱**: FastAPI 백엔드 + Next.js 15 프론트엔드 (QWarty 프로젝트)
 
 ## Quick Commands
@@ -70,10 +70,10 @@ curl -fsSL https://raw.githubusercontent.com/lastdays03/team-standards/main/scri
 
 ```
 .claude/
-  agents/       # 11 autonomous agents (auth-route-debugger, code-refactor-master, planner, etc.)
-  commands/     # 3 slash commands (/dev-docs, /dev-docs-update, /route-research-for-testing)
-  hooks/        # 7 hooks (skill-activation-prompt, post-tool-use-tracker, tsc-check, etc.)
-  skills/       # 14 skills + skill-rules.json (auto-activation config)
+  agents/       # 7 autonomous agents (planner, code-refactor-master, frontend-error-fixer, etc.)
+  commands/     # 2 slash commands (/dev-docs, /dev-docs-update)
+  hooks/        # 2 hooks (post-tool-use-tracker, tsc-check)
+  skills/       # 16 skills (네이티브 description 매칭으로 자동 활성화)
   settings.json # Hook bindings & permissions
 docs/
   context/      # 세션 운영 (상태/결정/핸드오프/규칙)
@@ -89,38 +89,36 @@ scripts/        # install-claude-env.sh (설정만 타 프로젝트에 이식)
 
 ## Claude Code Infrastructure
 
-### Skills Auto-Activation
+### Skills
 
-스킬은 `.claude/skills/skill-rules.json`의 트리거 규칙에 따라 자동 활성화된다. `skill-activation-prompt` 훅(UserPromptSubmit)이 사용자 프롬프트와 파일 컨텍스트를 매칭하여 관련 스킬을 주입한다.
+스킬은 각 SKILL.md의 `description` 필드를 기반으로 Claude Code 네이티브 매칭에 의해 자동 활성화된다.
 
 주요 스킬:
 - `fastapi-backend-guidelines` — DDD, SQLModel, async/await 패턴
 - `nextjs-frontend-guidelines` — App Router, shadcn/ui, Tailwind CSS 4, 한국어 i18n
 - `pytest-backend-testing` — FastAPI 테스트 패턴 (유닛/통합/비동기/목킹)
-- `skill-developer` — 새 스킬 생성 메타가이드 (트리거, 훅, 500줄 룰)
+- `vercel-react-best-practices` — React/Next.js 성능 최적화 룰셋 (57개 규칙)
 - `error-tracking` — Sentry v8 통합 패턴
 
 ### Slash Commands
 
 - `/dev-docs <설명>` — `docs/plans/active/{task-name}/`에 plan/context/tasks 문서 구조 생성
 - `/dev-docs-update` — 컨텍스트 컴팩션 전 진행 상태 업데이트, 완료 작업 아카이브. docs/context 연동하여 세션 상태 동기화
-- `/route-research-for-testing` — 편집된 라우트 자동 감지 후 auth-route-tester로 테스트
 
 ### Hooks
 
-- **UserPromptSubmit**: `skill-activation-prompt` — 스킬 자동 활성화
-- **PostToolUse**: `post-tool-use-tracker` — Edit/Write/MultiEdit 추적
-- **Stop**: `tsc-check`, `trigger-build-resolver` — TypeScript 컴파일 검증 및 에러 자동 수정
+- **PostToolUse**: `post-tool-use-tracker` — Edit/Write/MultiEdit 파일 변경 추적, 영향 repo 감지
+- **Stop**: `tsc-check` — TypeScript 컴파일 검증, 에러 시 auto-error-resolver 안내
 
 ### Agents
 
 에이전트는 `.claude/agents/*.md`에 정의된 자율 실행 서브태스크 전문가. 주요:
-- `planner` / `plan-reviewer` — 개발 계획 수립 및 리뷰
+- `planner` / `plan-reviewer` — 개발 계획 수립 및 리뷰 (리팩토링 계획 포함)
 - `code-architecture-reviewer` — 아키텍처 일관성/품질 리뷰
 - `code-refactor-master` — 종합 리팩토링 (파일 재구성, 의존성 추적)
-- `auth-route-tester` / `auth-route-debugger` — JWT 인증 라우트 테스트/디버깅
+- `documentation-architect` — 개발 문서, API 문서, 데이터 플로우 생성
 - `frontend-error-fixer` — 빌드타임/런타임 프론트엔드 에러 진단
-- `web-research-specialist` — GitHub Issues, Reddit, SO 기술 리서치
+- `auto-error-resolver` — TypeScript 컴파일 에러 자동 수정
 
 ## Document Management
 

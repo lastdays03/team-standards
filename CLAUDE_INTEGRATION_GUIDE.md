@@ -23,17 +23,18 @@ This repository is a **reference library** of Claude Code infrastructure compone
 
 ### Frontend Skills
 
-**frontend-dev-guidelines requires:**
-- React (19+)
-- MUI v5
+**nextjs-frontend-guidelines requires:**
+- Next.js 15 (App Router)
+- React 19
 - TypeScript
+- Tailwind CSS 4, shadcn/ui
 
 **Before integrating, ask:**
-"Do you use React with MUI v5?"
+"Do you use Next.js with App Router and Tailwind CSS?"
 
 **If NO:**
 ```
-The frontend-dev-guidelines skill is designed specifically for React + MUI v7. I can:
+The nextjs-frontend-guidelines skill is designed specifically for Next.js 15 + Tailwind CSS 4 + shadcn/ui. I can:
 1. Help you create a similar skill adapted for [their stack] using this as a template
 2. Extract the framework-agnostic patterns (file organization, performance, etc.)
 3. Skip this skill if not relevant
@@ -43,20 +44,20 @@ Which would you prefer?
 
 ### Backend Skills
 
-**backend-dev-guidelines requires:**
-- Node.js/Express
-- TypeScript
-- Prisma ORM
-- Sentry
+**fastapi-backend-guidelines requires:**
+- Python 3.12+
+- FastAPI
+- SQLModel / SQLAlchemy (async)
+- Domain-Driven Design structure
 
 **Before integrating, ask:**
-"Do you use Node.js with Express and Prisma?"
+"Do you use Python with FastAPI and SQLModel/SQLAlchemy?"
 
 **If NO:**
 ```
-The backend-dev-guidelines skill is designed for Express/Prisma. I can:
+The fastapi-backend-guidelines skill is designed for FastAPI/SQLModel with DDD. I can:
 1. Help you create similar guidelines adapted for [their stack] using this as a template
-2. Extract the architecture patterns (layered architecture works for any framework)
+2. Extract the architecture patterns (DDD/layered architecture works for any framework)
 3. Skip this skill
 
 Which would you prefer?
@@ -65,9 +66,10 @@ Which would you prefer?
 ### Skills That Are Tech-Agnostic
 
 These work for ANY tech stack:
-- ✅ **skill-developer** - Meta-skill, no tech requirements
-- ✅ **route-tester** - Only requires JWT cookie auth (framework agnostic)
-- ✅ **error-tracking** - Sentry works with most stacks
+- **error-tracking** - Sentry works with most stacks
+- **pytest-backend-testing** - Python testing patterns (requires pytest)
+- **mermaid** - Diagram generation, no tech requirements
+- **pdf** / **docx** / **pptx** - Document generation, no tech requirements
 
 ---
 
@@ -89,7 +91,7 @@ When user says: **"Add [component] to my project"**
 
 ### Step-by-Step Process
 
-**When user requests a skill** (e.g., "add backend-dev-guidelines"):
+**When user requests a skill** (e.g., "add fastapi-backend-guidelines"):
 
 #### 1. Understand Their Project
 
@@ -101,120 +103,53 @@ When user says: **"Add [component] to my project"**
 #### 2. Copy the Skill
 
 ```bash
-cp -r /path/to/showcase/.claude/skills/[skill-name] \\
+cp -r /path/to/showcase/.claude/skills/[skill-name] \
       $CLAUDE_PROJECT_DIR/.claude/skills/
 ```
 
-#### 3. Handle skill-rules.json
+#### 3. Verify the Skill Description
 
-**Check if it exists:**
-```bash
-ls $CLAUDE_PROJECT_DIR/.claude/skills/skill-rules.json
-```
+Skills activate via Claude Code's **native description matching**. Each skill directory contains a description that Claude uses to determine relevance. No additional configuration files are needed.
 
-**If NO (doesn't exist):**
-- Copy the template from showcase
-- Remove skills user doesn't want
-- Customize for their project
+**Check the skill's description is appropriate:**
+- Read the skill's main file to verify its description matches the user's use case
+- If the description needs tweaking for their context, update it
 
-**If YES (exists):**
-- Read their current skill-rules.json
-- Add the new skill entry
-- Merge carefully to avoid breaking existing skills
-
-#### 4. Customize Path Patterns
-
-**CRITICAL:** Update `pathPatterns` in skill-rules.json to match THEIR structure:
-
-**Example - User has monorepo:**
-```json
-{
-  "backend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": [
-        "packages/api/src/**/*.ts",
-        "packages/server/src/**/*.ts",
-        "apps/backend/**/*.ts"
-      ]
-    }
-  }
-}
-```
-
-**Example - User has single backend:**
-```json
-{
-  "backend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": [
-        "src/**/*.ts",
-        "backend/**/*.ts"
-      ]
-    }
-  }
-}
-```
-
-**Safe Generic Patterns** (when unsure):
-```json
-{
-  "pathPatterns": [
-    "**/*.ts",          // All TypeScript files
-    "src/**/*.ts",      // Common src directory
-    "backend/**/*.ts"   // Common backend directory
-  ]
-}
-```
-
-#### 5. Verify Integration
+#### 4. Verify Integration
 
 ```bash
 # Check skill was copied
 ls -la $CLAUDE_PROJECT_DIR/.claude/skills/[skill-name]
-
-# Validate skill-rules.json syntax
-cat $CLAUDE_PROJECT_DIR/.claude/skills/skill-rules.json | jq .
 ```
 
-**Tell user:** "Try editing a file in [their-backend-path] and the skill should activate."
+**Tell user:** "The skill will activate automatically when Claude detects relevant context in your prompts or files."
 
 ---
 
 ### Skill-Specific Notes
 
-#### backend-dev-guidelines
-- **Tech Requirements:** Node.js/Express, Prisma, TypeScript, Sentry
-- **Ask:** "Do you use Express with Prisma?" "Where's your backend code?"
+#### fastapi-backend-guidelines
+- **Tech Requirements:** Python 3.12+, FastAPI, SQLModel/SQLAlchemy (async)
+- **Ask:** "Do you use FastAPI with SQLModel?" "Where's your backend code?"
 - **If different stack:** Offer to adapt using this as template
-- **Customize:** pathPatterns
-- **Example paths:** `api/`, `server/`, `backend/`, `services/*/src/`
-- **Adaptation tip:** Architecture patterns (Routes→Controllers→Services) transfer to most frameworks
+- **Adaptation tip:** DDD patterns (domain/service/repository) transfer to most frameworks
 
-#### frontend-dev-guidelines
-- **Tech Requirements:** React 18+, MUI v7, TanStack Query/Router, TypeScript
-- **Ask:** "Do you use React with MUI v7?" "Where's your frontend code?"
+#### nextjs-frontend-guidelines
+- **Tech Requirements:** Next.js 15 (App Router), React 19, Tailwind CSS 4, shadcn/ui
+- **Ask:** "Do you use Next.js with App Router?" "Where's your frontend code?"
 - **If different stack:** Offer to create adapted version (Vue, Angular, etc.)
-- **Customize:** pathPatterns + all framework-specific examples
-- **Example paths:** `frontend/`, `client/`, `web/`, `apps/web/src/`
 - **Adaptation tip:** File organization and performance patterns transfer, component code doesn't
-
-#### route-tester
-- **Tech Requirements:** JWT cookie-based authentication (framework agnostic)
-- **Ask:** "Do you use JWT cookie-based authentication?"
-- **If NO:** "This skill is designed for JWT cookies. Want me to adapt it for [their auth type] or skip it?"
-- **Customize:** Service URLs, auth patterns
-- **Works with:** Any backend framework using JWT cookies
 
 #### error-tracking
 - **Tech Requirements:** Sentry (works with most backends)
 - **Ask:** "Do you use Sentry?" "Where's your backend code?"
 - **If NO Sentry:** "Want to use this as template for [their error tracking]?"
-- **Customize:** pathPatterns
 - **Adaptation tip:** Error tracking philosophy transfers to other tools (Rollbar, Bugsnag, etc.)
 
-#### skill-developer
-- **Tech Requirements:** None!
-- **Copy as-is** - meta-skill, fully generic, teaches skill creation for ANY tech stack
+#### pytest-backend-testing
+- **Tech Requirements:** Python, pytest, FastAPI (for async patterns)
+- **Ask:** "Do you use pytest for testing?"
+- **Adaptation tip:** Testing strategies and patterns transfer to other Python test frameworks
 
 ---
 
@@ -229,13 +164,13 @@ When user's tech stack differs from skill requirements, you have options:
 **Process:**
 1. **Copy the skill as a starting point:**
    ```bash
-   cp -r showcase/.claude/skills/frontend-dev-guidelines \\
+   cp -r showcase/.claude/skills/nextjs-frontend-guidelines \
          $CLAUDE_PROJECT_DIR/.claude/skills/vue-dev-guidelines
    ```
 
 2. **Identify what needs changing:**
    - Framework-specific code examples (React → Vue)
-   - Library APIs (MUI → Vuetify/PrimeVue)
+   - Library APIs (shadcn/ui → Vuetify/PrimeVue)
    - Import statements
    - Component patterns
 
@@ -250,17 +185,17 @@ When user's tech stack differs from skill requirements, you have options:
    - Update code examples to their framework
    - Keep the overall structure and sections
 
-5. **Update skill name and triggers:**
+5. **Update skill name and description:**
    - Rename skill appropriately
-   - Update skill-rules.json triggers for their stack
+   - Update the skill description to reflect the new stack
    - Test activation
 
-**Example - Adapting frontend-dev-guidelines for Vue:**
+**Example - Adapting nextjs-frontend-guidelines for Vue:**
 ```
-I'll create vue-dev-guidelines based on the React skill structure:
-- Replace React.FC → Vue defineComponent
-- Replace useSuspenseQuery → Vue composables
-- Replace MUI components → [their component library]
+I'll create vue-dev-guidelines based on the Next.js skill structure:
+- Replace React Server Components → Vue components
+- Replace shadcn/ui components → [their component library]
+- Replace App Router patterns → Vue Router
 - Keep: File organization, performance patterns, TypeScript guidelines
 
 This will take a few minutes. Sound good?
@@ -284,11 +219,11 @@ This will take a few minutes. Sound good?
 
 **Example:**
 ```
-The backend-dev-guidelines uses Express, but the layered architecture
-(Routes → Controllers → Services → Repositories) works for Django too.
+The fastapi-backend-guidelines uses FastAPI/SQLModel, but the DDD architecture
+(domain/service/repository) works for Django too.
 
 I can create a skill with:
-- Layered architecture pattern
+- Domain-Driven Design pattern
 - Separation of concerns principles
 - Error handling best practices
 - Testing strategies
@@ -309,25 +244,25 @@ Then you can add Django-specific examples as you establish patterns.
 ### What Usually Transfers Across Tech Stacks
 
 **Architecture & Organization:**
-- ✅ Layered architecture (Routes/Controllers/Services pattern)
-- ✅ Separation of concerns
-- ✅ File organization strategies (features/ pattern)
-- ✅ Progressive disclosure (main + resource files)
-- ✅ Repository pattern for data access
+- Layered architecture (Routes/Controllers/Services pattern)
+- Separation of concerns
+- File organization strategies (features/ pattern)
+- Progressive disclosure (main + resource files)
+- Repository pattern for data access
 
 **Development Practices:**
-- ✅ Error handling philosophy
-- ✅ Input validation importance
-- ✅ Testing strategies
-- ✅ Performance optimization principles
-- ✅ TypeScript best practices
+- Error handling philosophy
+- Input validation importance
+- Testing strategies
+- Performance optimization principles
+- TypeScript best practices
 
 **Framework-Specific Code:**
-- ❌ React hooks → Don't transfer to Vue/Angular
-- ❌ MUI components → Different component libraries
-- ❌ Prisma queries → Different ORM syntax
-- ❌ Express middleware → Different framework patterns
-- ❌ Routing implementations → Framework-specific
+- React hooks → Don't transfer to Vue/Angular
+- shadcn/ui components → Different component libraries
+- SQLModel queries → Different ORM syntax
+- FastAPI middleware → Different framework patterns
+- Routing implementations → Framework-specific
 
 ### When to Recommend Adaptation vs Skipping
 
@@ -346,51 +281,7 @@ Then you can add Django-specific examples as you establish patterns.
 
 ## Integrating Hooks
 
-### Essential Hooks (Always Safe to Copy)
-
-#### skill-activation-prompt (UserPromptSubmit)
-
-**Purpose:** Auto-suggests skills based on user prompts
-
-**Integration (NO customization needed):**
-
-```bash
-# Copy both files
-cp showcase/.claude/hooks/skill-activation-prompt.sh \\
-   $CLAUDE_PROJECT_DIR/.claude/hooks/
-cp showcase/.claude/hooks/skill-activation-prompt.ts \\
-   $CLAUDE_PROJECT_DIR/.claude/hooks/
-
-# Make executable
-chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.sh
-
-# Install dependencies if needed
-if [ -f "showcase/.claude/hooks/package.json" ]; then
-  cp showcase/.claude/hooks/package.json \\
-     $CLAUDE_PROJECT_DIR/.claude/hooks/
-  cd $CLAUDE_PROJECT_DIR/.claude/hooks && npm install
-fi
-```
-
-**Add to settings.json:**
-```json
-{
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**This hook is FULLY GENERIC** - works anywhere, no customization needed!
+### Essential Hook
 
 #### post-tool-use-tracker (PostToolUse)
 
@@ -400,7 +291,7 @@ fi
 
 ```bash
 # Copy file
-cp showcase/.claude/hooks/post-tool-use-tracker.sh \\
+cp showcase/.claude/hooks/post-tool-use-tracker.sh \
    $CLAUDE_PROJECT_DIR/.claude/hooks/
 
 # Make executable
@@ -430,48 +321,57 @@ chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-tracker.sh
 
 ---
 
-### Optional Hooks (Require Heavy Customization)
+### Optional Hook
 
-#### tsc-check.sh and trigger-build-resolver.sh (Stop hooks)
+#### tsc-check.sh (Stop)
 
-⚠️ **WARNING:** These hooks are configured for a specific multi-service monorepo structure.
+**Purpose:** Runs TypeScript compilation check when Claude stops, catching type errors before they accumulate.
 
 **Before integrating, ask:**
-1. "Do you have a monorepo with multiple TypeScript services?"
-2. "What are your service directory names?"
+1. "Do you have TypeScript in your project?"
+2. "What's your project structure? (monorepo or single app)"
 3. "Where are your tsconfig.json files located?"
 
-**For SIMPLE projects (single service):**
-- **RECOMMEND SKIPPING** these hooks
-- They're overkill for single-service projects
-- User can run `tsc --noEmit` manually instead
+**For SIMPLE projects (single TypeScript app):**
+- The hook auto-detects common directory structures (frontend, backend, src, packages/*, etc.)
+- It finds the appropriate tsconfig variant (tsconfig.app.json, tsconfig.build.json, tsconfig.json)
+- Copy as-is; no customization needed for standard layouts
 
-**For COMPLEX projects (multi-service monorepo):**
+**For COMPLEX projects (non-standard structure):**
+- Review the `get_repo_for_file()` function to ensure it recognizes the project's directory layout
+- The hook already handles common patterns: frontend, client, web, backend, server, api, src, packages/*
+- Add custom directory names to the `case` statement if needed
 
-1. Copy the files
-2. **MUST EDIT** tsc-check.sh - find this section:
+**Integration:**
+
 ```bash
-case "$repo" in
-    email|exports|form|frontend|projects|uploads|users|utilities|events|database)
-        echo "$repo"
-        return 0
-        ;;
-esac
-```
+# Copy file
+cp showcase/.claude/hooks/tsc-check.sh \
+   $CLAUDE_PROJECT_DIR/.claude/hooks/
 
-3. Replace with USER'S actual service names:
-```bash
-case "$repo" in
-    api|web|auth|payments|notifications)  # ← User's services
-        echo "$repo"
-        return 0
-        ;;
-esac
-```
+# Make executable
+chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/tsc-check.sh
 
-4. Test manually before adding to settings.json:
-```bash
+# Test manually before adding to settings.json
 ./.claude/hooks/tsc-check.sh
+```
+
+**Add to settings.json:**
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/tsc-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
 ```
 
 **IMPORTANT:** If this hook fails, it will block Stop events. Only add if you're sure it works for their setup.
@@ -486,7 +386,7 @@ esac
 
 ```bash
 # Copy the agent file
-cp showcase/.claude/agents/[agent-name].md \\
+cp showcase/.claude/agents/[agent-name].md \
    $CLAUDE_PROJECT_DIR/.claude/agents/
 ```
 
@@ -503,16 +403,11 @@ Some agents may reference paths. **Before copying, read the agent file and check
 **If found, update them:**
 ```bash
 sed -i 's|~/git/old-project/|.|g' $CLAUDE_PROJECT_DIR/.claude/agents/[agent].md
-sed -i 's|/root/git/.*PROJECT.*DIR|$CLAUDE_PROJECT_DIR|g' \\
+sed -i 's|/root/git/.*PROJECT.*DIR|$CLAUDE_PROJECT_DIR|g' \
     $CLAUDE_PROJECT_DIR/.claude/agents/[agent].md
 ```
 
 ### Agent-Specific Notes
-
-**auth-route-tester / auth-route-debugger:**
-- Requires JWT cookie-based authentication in user's project
-- Ask: "Do you use JWT cookies for auth?"
-- If NO: "These agents are for JWT cookie auth. Skip them or want me to adapt?"
 
 **frontend-error-fixer:**
 - May reference screenshot paths
@@ -527,7 +422,7 @@ sed -i 's|/root/git/.*PROJECT.*DIR|$CLAUDE_PROJECT_DIR|g' \\
 
 ```bash
 # Copy command file
-cp showcase/.claude/commands/[command].md \\
+cp showcase/.claude/commands/[command].md \
    $CLAUDE_PROJECT_DIR/.claude/commands/
 ```
 
@@ -540,10 +435,6 @@ Commands may reference dev docs paths. **Check and update:**
 - Ask: "Where do you want dev documentation stored?"
 - Update paths in the command files
 
-**route-research-for-testing:**
-- May reference service paths
-- Ask about their API structure
-
 ---
 
 ## Common Patterns & Best Practices
@@ -551,45 +442,13 @@ Commands may reference dev docs paths. **Check and update:**
 ### Pattern: Asking About Project Structure
 
 **DON'T assume:**
-- ❌ "I'll add this for your blog-api service"
-- ❌ "Configuring for your frontend directory"
+- "I'll add this for your api service"
+- "Configuring for your frontend directory"
 
 **DO ask:**
-- ✅ "What's your project structure? Monorepo or single app?"
-- ✅ "Where is your backend code located?"
-- ✅ "Do you use workspaces or have multiple services?"
-
-### Pattern: Customizing skill-rules.json
-
-**User has monorepo with workspaces:**
-```json
-{
-  "pathPatterns": [
-    "packages/*/src/**/*.ts",
-    "apps/*/src/**/*.tsx"
-  ]
-}
-```
-
-**User has Nx monorepo:**
-```json
-{
-  "pathPatterns": [
-    "apps/api/src/**/*.ts",
-    "libs/*/src/**/*.ts"
-  ]
-}
-```
-
-**User has simple structure:**
-```json
-{
-  "pathPatterns": [
-    "src/**/*.ts",
-    "backend/**/*.ts"
-  ]
-}
-```
+- "What's your project structure? Monorepo or single app?"
+- "Where is your backend code located?"
+- "Do you use workspaces or have multiple services?"
 
 ### Pattern: settings.json Integration
 
@@ -607,12 +466,23 @@ Instead, **extract and merge** the sections they need:
   // ... their existing config ...
   "hooks": {
     // ... their existing hooks ...
-    "UserPromptSubmit": [  // ← Add this section
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-tracker.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/tsc-check.sh"
           }
         ]
       }
@@ -632,48 +502,36 @@ After integration, **verify these items:**
 ls -la $CLAUDE_PROJECT_DIR/.claude/hooks/*.sh
 # Should show: -rwxr-xr-x
 
-# 2. skill-rules.json is valid JSON
-cat $CLAUDE_PROJECT_DIR/.claude/skills/skill-rules.json | jq .
-# Should parse without errors
-
-# 3. Hook dependencies installed (if TypeScript hooks)
-ls $CLAUDE_PROJECT_DIR/.claude/hooks/node_modules/
-# Should show packages if package.json exists
-
-# 4. Settings.json is valid JSON
+# 2. Settings.json is valid JSON
 cat $CLAUDE_PROJECT_DIR/.claude/settings.json | jq .
 # Should parse without errors
 ```
 
 **Then ask user to test:**
 - "Try editing a file in [relevant-path] - the skill should activate"
-- "Try asking me a question about [topic] - I should suggest the skill"
+- "Try asking me a question about [topic] - the skill should be suggested"
 
 ---
 
 ## Common Mistakes to Avoid
 
-### ❌ DON'T: Copy settings.json as-is
-**Why:** The Stop hooks reference non-existent services
-**DO:** Extract only UserPromptSubmit and PostToolUse sections
+### DON'T: Copy settings.json as-is
+**Why:** The Stop hooks may not match the user's project structure
+**DO:** Extract only PostToolUse and Stop sections, verify tsc-check works
 
-### ❌ DON'T: Keep example service names
-**Why:** User doesn't have blog-api, auth-service, etc.
-**DO:** Ask about their actual structure and update
-
-### ❌ DON'T: Skip making hooks executable
+### DON'T: Skip making hooks executable
 **Why:** Hooks won't run without execute permission
 **DO:** Always `chmod +x` after copying
 
-### ❌ DON'T: Assume monorepo structure
+### DON'T: Assume monorepo structure
 **Why:** Most projects are single-service
 **DO:** Ask first, then customize
 
-### ❌ DON'T: Add all skills at once
+### DON'T: Add all skills at once
 **Why:** Overwhelming and may not all be relevant
 **DO:** Ask which skills are relevant to their work
 
-### ❌ DON'T: Copy Stop hooks without testing
+### DON'T: Copy Stop hooks without testing
 **Why:** They can block the Stop event if they fail
 **DO:** Test manually first, only add if working
 
@@ -683,68 +541,67 @@ cat $CLAUDE_PROJECT_DIR/.claude/settings.json | jq .
 
 ### Example 1: Adding Backend Skill
 
-**User:** "Add the backend-dev-guidelines skill to my project"
+**User:** "Add the fastapi-backend-guidelines skill to my project"
 
 **Claude should respond:**
 ```
-I'll add the backend-dev-guidelines skill. First, I need to understand
+I'll add the fastapi-backend-guidelines skill. First, I need to understand
 your project structure:
 
 1. Is this a monorepo with multiple services, or a single backend application?
-2. Where is your backend code located? (e.g., src/, backend/, server/)
-3. Do you use Express.js?
+2. Where is your backend code located? (e.g., src/, backend/, app/)
+3. Do you use FastAPI with SQLModel/SQLAlchemy?
 ```
 
-**User:** "Single app, code is in src/api/, yes we use Express"
+**User:** "Single app, code is in backend/, yes we use FastAPI with SQLModel"
 
 **Claude should:**
 1. Copy the skill directory
-2. Update skill-rules.json with pathPattern: `"src/api/**/*.ts"`
-3. Verify it's copied correctly
-4. Respond:
+2. Verify the skill description matches their use case
+3. Respond:
 ```
-✅ Added backend-dev-guidelines skill!
+Added fastapi-backend-guidelines skill!
 
 Configuration:
-- Skill triggers when editing files in src/api/
-- Activated by keywords like "controller", "service", "route", "API"
+- Skill activates automatically when Claude detects FastAPI/backend context
+- Covers DDD patterns, async/await, SQLModel, and testing guidelines
 
-Try it: Edit a file in src/api/ and you should see the skill suggestion.
+Try it: Ask about backend development patterns and the skill should activate.
 ```
 
 ### Example 2: Setting Up Hooks
 
-**User:** "Set up the skill activation hooks"
+**User:** "Set up the hooks for my project"
 
 **Claude should respond:**
 ```
-I'll set up the skill auto-activation system. This requires two hooks:
-1. skill-activation-prompt - Suggests skills based on your prompts
-2. post-tool-use-tracker - Tracks file changes
+I'll set up the hook system. There are two hooks available:
+1. post-tool-use-tracker - Tracks file changes (essential, no config needed)
+2. tsc-check - TypeScript compilation check on Stop (optional, for TS projects)
 
 Do you have a .claude/settings.json file already, or should I create one?
+Do you use TypeScript in your project?
 ```
 
-**User:** "I have settings.json already"
+**User:** "I have settings.json already, and yes I use TypeScript"
 
 **Claude should:**
 1. Read their settings.json
 2. Copy both hook files
-3. Run npm install in hooks directory
+3. Make hooks executable
 4. Add hook configurations to their settings.json (preserving existing config)
-5. Make hooks executable
+5. Test tsc-check manually
 6. Respond:
 ```
-✅ Skill activation hooks installed!
+Hooks installed!
 
 What I did:
-- Copied skill-activation-prompt hook
-- Copied post-tool-use-tracker hook
-- Installed dependencies
-- Added to your settings.json
+- Copied post-tool-use-tracker hook (PostToolUse)
+- Copied tsc-check hook (Stop)
+- Added both to your settings.json
 
-Test it: Ask me "help with backend development" and I should suggest
-the backend-dev-guidelines skill.
+The post-tool-use-tracker will track file changes automatically.
+The tsc-check will verify TypeScript compilation when Claude stops.
 ```
 
 ### Example 3: Adding Agent
@@ -763,7 +620,7 @@ I'll copy it to your .claude/agents/ directory now.
 1. Copy the agent file
 2. Respond:
 ```
-✅ Added code-architecture-reviewer agent!
+Added code-architecture-reviewer agent!
 
 Use it by running the Task tool with:
 - subagent_type: "code-architecture-reviewer"
@@ -772,24 +629,24 @@ Use it by running the Task tool with:
 The agent will review your code and provide architectural feedback.
 ```
 
-### Example 3: Tech Stack Mismatch
+### Example 4: Tech Stack Mismatch
 
-**User:** "Add the frontend-dev-guidelines skill to my Vue project"
+**User:** "Add the nextjs-frontend-guidelines skill to my Vue project"
 
 **Claude should:**
 ```
-I see you're using Vue. The frontend-dev-guidelines skill is specifically
-designed for React + MUI v7. I have a few options:
+I see you're using Vue. The nextjs-frontend-guidelines skill is specifically
+designed for Next.js 15 + Tailwind CSS 4 + shadcn/ui. I have a few options:
 
 Option 1 (Recommended): I can create a vue-dev-guidelines skill using the
-React skill as a template. I'll adapt:
-- Component patterns for Vue (Composition API, defineComponent)
-- Replace MUI examples with your component library
-- Adapt data fetching for Vue patterns
+Next.js skill as a template. I'll adapt:
+- Component patterns for Vue (Composition API)
+- Replace shadcn/ui examples with your component library
+- Replace App Router patterns with Vue Router
 - Keep: File organization, performance principles, TypeScript standards
 
 Option 2: Extract only the framework-agnostic patterns (file organization,
-performance, testing) without React-specific code.
+performance, testing) without Next.js-specific code.
 
 Option 3: Skip it and help you create Vue guidelines from scratch.
 
@@ -799,19 +656,19 @@ Which would you prefer?
 **User:** "Option 1 sounds good, I use Vuetify"
 
 **Claude should:**
-1. Copy frontend-dev-guidelines as vue-dev-guidelines
+1. Copy nextjs-frontend-guidelines as vue-dev-guidelines
 2. Go through each resource file
-3. Replace React patterns with Vue Composition API
-4. Replace MUI components with Vuetify
-5. Update skill-rules.json with Vue-specific triggers (.vue files)
+3. Replace Next.js patterns with Vue Composition API
+4. Replace shadcn/ui components with Vuetify
+5. Update the skill description for Vue context
 6. Respond:
 ```
-✅ Created vue-dev-guidelines skill adapted for Vue 3 + Vuetify!
+Created vue-dev-guidelines skill adapted for Vue 3 + Vuetify!
 
 What I changed:
-- React.FC components → Vue defineComponent
-- MUI v7 examples → Vuetify components
-- TanStack Query → Your data fetching approach
+- React Server Components → Vue defineComponent
+- shadcn/ui examples → Vuetify components
+- Next.js App Router → Vue Router
 - File patterns → .vue files
 
 What I kept:
@@ -831,33 +688,33 @@ Try editing a .vue file - the skill should activate.
 
 | Component | Tech Requirements | Customization | What to Ask |
 |-----------|------------------|--------------|-------------|
-| **skill-developer** | None | ✅ None | Copy as-is |
-| **backend-dev-guidelines** | Express/Prisma/Node | ⚠️ Paths + tech check | "Use Express/Prisma?" "Where's backend?" |
-| **frontend-dev-guidelines** | React/MUI v7 | ⚠️⚠️ Paths + framework | "Use React/MUI v7?" "Where's frontend?" |
-| **route-tester** | JWT cookies | ⚠️ Auth + paths | "JWT cookie auth?" |
-| **error-tracking** | Sentry | ⚠️ Paths | "Use Sentry?" "Where's backend?" |
-| **skill-activation-prompt** | ✅ None | Copy as-is |
-| **post-tool-use-tracker** | ✅ None | Copy as-is |
-| **tsc-check** | ⚠️⚠️⚠️ Heavy | "Monorepo or single service?" |
-| **All agents** | ✅ Minimal | Check paths |
-| **All commands** | ⚠️ Paths | "Where for dev docs?" |
+| **fastapi-backend-guidelines** | FastAPI/SQLModel/Python | Verify description | "Use FastAPI/SQLModel?" |
+| **nextjs-frontend-guidelines** | Next.js 15/Tailwind/shadcn | Verify description | "Use Next.js/Tailwind?" |
+| **pytest-backend-testing** | Python/pytest | Verify description | "Use pytest?" |
+| **error-tracking** | Sentry | Verify description | "Use Sentry?" |
+| **mermaid** | None | Copy as-is | - |
+| **pdf** / **docx** / **pptx** | None | Copy as-is | - |
+| **post-tool-use-tracker** | None | Copy as-is | - |
+| **tsc-check** | TypeScript | Test before enabling | "Monorepo or single app?" |
+| **All agents** | Minimal | Check paths | - |
+| **All commands** | Paths | "Where for dev docs?" | - |
 
 ### When to Recommend Skipping
 
 | Component | Skip If... |
 |-----------|-----------|
-| **tsc-check hooks** | Single-service project or different build setup |
-| **route-tester** | Not using JWT cookie authentication |
-| **frontend-dev-guidelines** | Not using React + MUI |
-| **auth agents** | Not using JWT cookie auth |
+| **tsc-check hook** | No TypeScript in project or non-standard build setup |
+| **fastapi-backend-guidelines** | Not using Python/FastAPI |
+| **nextjs-frontend-guidelines** | Not using Next.js |
+| **pytest-backend-testing** | Not using Python/pytest |
 
 ---
 
 ## Final Tips for Claude
 
 **When user says "add everything":**
-- Start with essentials: skill-activation hooks + 1-2 relevant skills
-- Don't overwhelm them with all 5 skills + 10 agents
+- Start with essentials: post-tool-use-tracker hook + 1-2 relevant skills
+- Don't overwhelm them with all skills + agents at once
 - Ask what they actually need
 
 **When something doesn't work:**
@@ -867,7 +724,7 @@ Try editing a .vue file - the skill should activate.
 - Check for JSON syntax errors
 
 **When user is unsure:**
-- Recommend starting with just skill-activation hooks
+- Recommend starting with just post-tool-use-tracker hook
 - Add backend OR frontend skill (whichever they use)
 - Add more later as needed
 

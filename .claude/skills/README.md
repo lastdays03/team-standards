@@ -1,368 +1,117 @@
 # Skills
 
-Production-tested skills for Claude Code that auto-activate based on context.
+Claude Code 스킬 모음 -- 네이티브 description 매칭으로 자동 활성화.
 
 ---
 
 ## What Are Skills?
 
-Skills are modular knowledge bases that Claude loads when needed. They provide:
-- Domain-specific guidelines
-- Best practices
-- Code examples
-- Anti-patterns to avoid
+스킬은 Claude Code가 맥락에 따라 자동으로 로드하는 모듈형 지식 베이스다. 각 스킬 디렉토리의 `SKILL.md` 파일에 정의된 `description` 필드를 Claude Code가 사용자 프롬프트와 매칭하여, 관련 스킬을 자동으로 활성화한다.
 
-**Problem:** Skills don't activate automatically by default.
+**별도 설정 파일이나 훅 없이** Claude Code의 네이티브 매칭만으로 동작한다:
+- 사용자가 "FastAPI 라우터 만들어줘"라고 하면 → `fastapi-backend-guidelines` 활성화
+- 사용자가 "PDF 합치고 싶어"라고 하면 → `pdf` 활성화
+- 사용자가 "프로젝트 상태 점검해줘"라고 하면 → `project-health-check` 활성화
 
-**Solution:** This showcase includes the hooks + configuration to make them activate.
+매칭 정확도는 SKILL.md의 `description` 품질에 달려 있다. 구체적이고 다양한 트리거 표현을 포함할수록 활성화 정확도가 높아진다.
 
 ---
 
 ## Available Skills
 
-### skill-developer (Meta-Skill)
-**Purpose:** Creating and managing Claude Code skills
-
-**Files:** 7 resource files (426 lines total)
-
-**Use when:**
-- Creating new skills
-- Understanding skill structure
-- Working with skill-rules.json
-- Debugging skill activation
-
-**Customization:** ✅ None - copy as-is
-
-**[View Skill →](skill-developer/)**
-
----
-
-### backend-dev-guidelines
-**Purpose:** Node.js/Express/TypeScript development patterns
-
-**Files:** 12 resource files (304 lines main + resources)
-
-**Covers:**
-- Layered architecture (Routes → Controllers → Services → Repositories)
-- BaseController pattern
-- Prisma database access
-- Sentry error tracking
-- Zod validation
-- UnifiedConfig pattern
-- Dependency injection
-- Testing strategies
-
-**Use when:**
-- Creating/modifying API routes
-- Building controllers or services
-- Database operations with Prisma
-- Setting up error tracking
-
-**Customization:** ⚠️ Update `pathPatterns` in skill-rules.json to match your backend directories
-
-**Example pathPatterns:**
-```json
-{
-  "pathPatterns": [
-    "src/api/**/*.ts",       // Single app with src/api
-    "backend/**/*.ts",       // Backend directory
-    "services/*/src/**/*.ts" // Multi-service monorepo
-  ]
-}
-```
-
-**[View Skill →](backend-dev-guidelines/)**
-
----
-
-### frontend-dev-guidelines
-**Purpose:** React/TypeScript/MUI v7 development patterns
-
-**Files:** 11 resource files (398 lines main + resources)
-
-**Covers:**
-- Modern React patterns (Suspense, lazy loading)
-- useSuspenseQuery for data fetching
-- MUI v7 styling (Grid with `size={{}}` prop)
-- TanStack Router
-- File organization (features/ pattern)
-- Performance optimization
-- TypeScript best practices
-
-**Use when:**
-- Creating React components
-- Fetching data with TanStack Query
-- Styling with MUI v7
-- Setting up routing
-
-**Customization:** ⚠️ Update `pathPatterns` + verify you use React/MUI
-
-**Example pathPatterns:**
-```json
-{
-  "pathPatterns": [
-    "src/**/*.tsx",          // Single React app
-    "frontend/src/**/*.tsx", // Frontend directory
-    "apps/web/**/*.tsx"      // Monorepo web app
-  ]
-}
-```
-
-**Note:** This skill is configured as a **guardrail** (enforcement: "block") to prevent MUI v6→v7 incompatibilities.
-
-**[View Skill →](frontend-dev-guidelines/)**
-
----
-
-### route-tester
-**Purpose:** Testing authenticated API routes with JWT cookie auth
-
-**Files:** 1 main file (389 lines)
-
-**Covers:**
-- JWT cookie-based authentication testing
-- test-auth-route.js script patterns
-- cURL with cookie authentication
-- Debugging auth issues
-- Testing POST/PUT/DELETE operations
-
-**Use when:**
-- Testing API endpoints
-- Debugging authentication
-- Validating route functionality
-
-**Customization:** ⚠️ Requires JWT cookie auth setup
-
-**Ask first:** "Do you use JWT cookie-based authentication?"
-- If YES: Copy and customize service URLs
-- If NO: Skip or adapt for your auth method
-
-**[View Skill →](route-tester/)**
-
----
-
-### error-tracking
-**Purpose:** Sentry error tracking and monitoring patterns
-
-**Files:** 1 main file (~250 lines)
-
-**Covers:**
-- Sentry v8 initialization
-- Error capture patterns
-- Breadcrumbs and user context
-- Performance monitoring
-- Integration with Express and React
-
-**Use when:**
-- Setting up error tracking
-- Capturing exceptions
-- Adding error context
-- Debugging production issues
-
-**Customization:** ⚠️ Update `pathPatterns` for your backend
-
-**[View Skill →](error-tracking/)**
-
----
-
-## How to Add a Skill to Your Project
-
-### Quick Integration
-
-**For Claude Code:**
-```
-User: "Add the backend-dev-guidelines skill to my project"
-
-Claude should:
-1. Ask about project structure
-2. Copy skill directory
-3. Update skill-rules.json with their paths
-4. Verify integration
-```
-
-See [CLAUDE_INTEGRATION_GUIDE.md](../../CLAUDE_INTEGRATION_GUIDE.md) for complete instructions.
-
-### Manual Integration
-
-**Step 1: Copy the skill directory**
-```bash
-cp -r claude-code-infrastructure-showcase/.claude/skills/backend-dev-guidelines \\
-      your-project/.claude/skills/
-```
-
-**Step 2: Update skill-rules.json**
-
-If you don't have one, create it:
-```bash
-cp claude-code-infrastructure-showcase/.claude/skills/skill-rules.json \\
-   your-project/.claude/skills/
-```
-
-Then customize the `pathPatterns` for your project:
-```json
-{
-  "skills": {
-    "backend-dev-guidelines": {
-      "fileTriggers": {
-        "pathPatterns": [
-          "YOUR_BACKEND_PATH/**/*.ts"  // ← Update this!
-        ]
-      }
-    }
-  }
-}
-```
-
-**Step 3: Test**
-- Edit a file in your backend directory
-- The skill should activate automatically
-
----
-
-## skill-rules.json Configuration
-
-### What It Does
-
-Defines when skills should activate based on:
-- **Keywords** in user prompts ("backend", "API", "route")
-- **Intent patterns** (regex matching user intent)
-- **File path patterns** (editing backend files)
-- **Content patterns** (code contains Prisma queries)
-
-### Configuration Format
-
-```json
-{
-  "skill-name": {
-    "type": "domain" | "guardrail",
-    "enforcement": "suggest" | "block",
-    "priority": "high" | "medium" | "low",
-    "promptTriggers": {
-      "keywords": ["list", "of", "keywords"],
-      "intentPatterns": ["regex patterns"]
-    },
-    "fileTriggers": {
-      "pathPatterns": ["path/to/files/**/*.ts"],
-      "contentPatterns": ["import.*Prisma"]
-    }
-  }
-}
-```
-
-### Enforcement Levels
-
-- **suggest**: Skill appears as suggestion, doesn't block
-- **block**: Must use skill before proceeding (guardrail)
-
-**Use "block" for:**
-- Preventing breaking changes (MUI v6→v7)
-- Critical database operations
-- Security-sensitive code
-
-**Use "suggest" for:**
-- General best practices
-- Domain guidance
-- Code organization
+| # | 스킬 | 설명 | 범용성 |
+|---|------|------|--------|
+| 1 | [fastapi-backend-guidelines](fastapi-backend-guidelines/) | FastAPI DDD, SQLModel, async/await 패턴 | 프로젝트 특화 |
+| 2 | [nextjs-frontend-guidelines](nextjs-frontend-guidelines/) | Next.js 15 App Router, shadcn/ui, Tailwind CSS 4 | 프로젝트 특화 |
+| 3 | [pytest-backend-testing](pytest-backend-testing/) | FastAPI pytest 패턴 (유닛/통합/비동기/목킹) | 프로젝트 특화 |
+| 4 | [vercel-react-best-practices](vercel-react-best-practices/) | React/Next.js 성능 최적화 (Vercel 엔지니어링 57개 규칙) | 범용 |
+| 5 | [error-tracking](error-tracking/) | Sentry v8 통합 패턴 | 범용 |
+| 6 | [mermaid](mermaid/) | Mermaid 다이어그램 생성 (flowchart, sequence, ER 등 20종) | 범용 |
+| 7 | [docx](docx/) | Word 문서 생성/편집/분석 | 범용 |
+| 8 | [pdf](pdf/) | PDF 읽기/합치기/분할/워터마크/OCR | 범용 |
+| 9 | [pptx](pptx/) | PowerPoint 프레젠테이션 생성/편집 | 범용 |
+| 10 | [frontend-design](frontend-design/) | 프론트엔드 UI 디자인 (프로덕션급, 비AI 미학) | 범용 |
+| 11 | [web-design-guidelines](web-design-guidelines/) | Web Interface Guidelines 기반 UI 리뷰 | 범용 |
+| 12 | [brand-guidelines](brand-guidelines/) | Anthropic 브랜드 색상/타이포그래피 | 프로젝트 특화 |
+| 13 | [ppt-brand-guidelines](ppt-brand-guidelines/) | VRL 프레젠테이션 브랜드 가이드라인 | 프로젝트 특화 |
+| 14 | [area-deep-dive](area-deep-dive/) | 코드 영역 심층 분석 리포트 생성 | 범용 |
+| 15 | [project-health-check](project-health-check/) | 프로젝트 건강 점검 (테스트/빌드/린트/의존성/구조) | 범용 |
+| 16 | [project-report](project-report/) | 외부 공유용 프로젝트 상태 보고서 | 범용 |
 
 ---
 
 ## Creating Your Own Skills
 
-See the **skill-developer** skill for complete guide on:
-- Skill YAML frontmatter structure
-- Resource file organization
-- Trigger pattern design
-- Testing skill activation
+### 디렉토리 구조
 
-**Quick template:**
+```
+.claude/skills/
+  my-skill/
+    SKILL.md          # 필수 - description 포함
+    resources/        # 선택 - 참조 자료
+      topic-1.md
+      topic-2.md
+```
+
+### SKILL.md 작성법
+
 ```markdown
 ---
 name: my-skill
-description: What this skill does
+description: "이 스킬이 하는 일에 대한 명확한 설명.
+Use when 사용자가 X를 요청할 때, Y 작업을 할 때.
+Also trigger when 'keyword1', 'keyword2', '한국어 트리거'."
 ---
 
 # My Skill Title
 
 ## Purpose
-[Why this skill exists]
+[이 스킬이 존재하는 이유]
 
-## When to Use This Skill
-[Auto-activation scenarios]
+## Guidelines
+[핵심 패턴과 예제]
+```
 
-## Quick Reference
-[Key patterns and examples]
+### description 작성 팁
 
-## Resource Files
-- [topic-1.md](resources/topic-1.md)
-- [topic-2.md](resources/topic-2.md)
+`description`이 스킬 활성화의 유일한 매칭 기준이다. 잘 작성해야 한다:
+
+1. **첫 문장**: 스킬이 하는 일을 한 줄로 명확히
+2. **Use when**: 어떤 상황에서 사용하는지 구체적으로
+3. **트리거 키워드**: 사용자가 실제로 쓸 표현을 나열 (영어 + 한국어)
+4. **구분 표현**: 유사 스킬과 혼동되지 않도록 경계 명시
+
+좋은 예:
+```yaml
+description: "Run a comprehensive project health check and generate a Markdown report.
+Use this skill when the user asks to check project health, audit code quality,
+review project status. Also trigger when the user mentions 'health check',
+'code quality report', '프로젝트 상태', '코드 품질'."
+```
+
+나쁜 예:
+```yaml
+description: "Project health checking tool."
 ```
 
 ---
 
 ## Troubleshooting
 
-### Skill isn't activating
+### 스킬이 활성화되지 않는다
 
-**Check:**
-1. Is skill directory in `.claude/skills/`?
-2. Is skill listed in `skill-rules.json`?
-3. Do `pathPatterns` match your files?
-4. Are hooks installed and working?
-5. Is settings.json configured correctly?
+1. `.claude/skills/{skill-name}/SKILL.md` 파일이 존재하는지 확인
+2. SKILL.md에 `---` frontmatter와 `description` 필드가 있는지 확인
+3. description에 사용자가 실제로 사용할 키워드/표현이 포함되어 있는지 확인
+4. 한국어로 요청한다면 description에 한국어 트리거도 포함했는지 확인
 
-**Debug:**
-```bash
-# Check skill exists
-ls -la .claude/skills/
+### 스킬이 너무 자주 활성화된다
 
-# Validate skill-rules.json
-cat .claude/skills/skill-rules.json | jq .
+- description을 더 구체적으로 작성
+- "Do NOT use for..." 문구로 제외 조건 명시
+- 유사 스킬과의 차이점을 description에 기술
 
-# Check hooks are executable
-ls -la .claude/hooks/*.sh
+### 엉뚱한 스킬이 활성화된다
 
-# Test hook manually
-./.claude/hooks/skill-activation-prompt.sh
-```
-
-### Skill activates too often
-
-Update skill-rules.json:
-- Make keywords more specific
-- Narrow `pathPatterns`
-- Increase specificity of `intentPatterns`
-
-### Skill never activates
-
-Update skill-rules.json:
-- Add more keywords
-- Broaden `pathPatterns`
-- Add more `intentPatterns`
-
----
-
-## For Claude Code
-
-**When integrating a skill for a user:**
-
-1. **Read [CLAUDE_INTEGRATION_GUIDE.md](../../CLAUDE_INTEGRATION_GUIDE.md)** first
-2. Ask about their project structure
-3. Customize `pathPatterns` in skill-rules.json
-4. Verify the skill file has no hardcoded paths
-5. Test activation after integration
-
-**Common mistakes:**
-- Keeping example paths (blog-api/, frontend/)
-- Not asking about monorepo vs single-app
-- Copying skill-rules.json without customization
-
----
-
-## Next Steps
-
-1. **Start simple:** Add one skill that matches your work
-2. **Verify activation:** Edit a relevant file, skill should suggest
-3. **Add more:** Once first skill works, add others
-4. **Customize:** Adjust triggers based on your workflow
-
-**Questions?** See [CLAUDE_INTEGRATION_GUIDE.md](../../CLAUDE_INTEGRATION_GUIDE.md) for comprehensive integration instructions.
+- description 첫 문장이 스킬의 핵심 목적을 명확히 전달하는지 확인
+- 다른 스킬과 겹치는 키워드가 있다면 구분 표현 추가

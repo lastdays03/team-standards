@@ -68,10 +68,7 @@ check_deps() {
     exit 1
   fi
 
-  if ! command -v node &>/dev/null; then
-    warn "node not found — hooks 의존성 설치가 건너뛰어집니다"
-    warn "훅을 사용하려면 Node.js 18+ 설치 후 cd .claude/hooks && npm install"
-  fi
+  # Node.js는 hooks에 더 이상 필수가 아님 (shell-only runtime)
 }
 
 # --- 원본 소스 확보 ---
@@ -115,17 +112,7 @@ install_claude_env() {
   cp -R "$SRC_DIR/.claude" "$TARGET_DIR/.claude"
   # settings.local.json은 개인 설정이므로 배포하지 않음
   rm -f "$TARGET_DIR/.claude/settings.local.json"
-  ok ".claude/ — agents(11), commands(3), hooks(6), skills(14+), settings"
-
-  # hooks 의존성
-  if [[ -f "$TARGET_DIR/.claude/hooks/package.json" ]] && command -v npm &>/dev/null; then
-    info "Installing hooks dependencies..."
-    if (cd "$TARGET_DIR/.claude/hooks" && npm install --silent 2>/dev/null); then
-      ok "hooks dependencies"
-    else
-      warn "hooks npm install failed — 수동 설치 필요: cd .claude/hooks && npm install"
-    fi
-  fi
+  ok ".claude/ — agents(7), commands(2), hooks(2), skills(16), settings"
 
   # ━━━ 2. CLAUDE.md — 기존 유지, 템플릿은 .example로 ━━━
   if [[ -f "$TARGET_DIR/CLAUDE.md" ]]; then
@@ -220,8 +207,8 @@ verify_installation() {
   local checks=(
     ".claude/settings.json"
     ".claude/agents/planner.md"
-    ".claude/skills/skill-rules.json"
-    ".claude/hooks/skill-activation-prompt.sh"
+    ".claude/hooks/post-tool-use-tracker.sh"
+    ".claude/hooks/tsc-check.sh"
     ".claude/commands/dev-docs.md"
     "CLAUDE_INTEGRATION_GUIDE.md"
     "docs/README.md"
@@ -263,10 +250,10 @@ dry_run() {
   echo -e "${BOLD}[DRY RUN] Would install to: $TARGET_DIR${NC}"
   echo ""
   echo -e "  ${CYAN}.claude/${NC}  ${YELLOW}← 강제 덮어쓰기${NC}"
-  echo "    agents/        (11 agents)"
-  echo "    commands/      (3 commands)"
-  echo "    hooks/         (6 hooks + dependencies)"
-  echo "    skills/        (14+ skills)"
+  echo "    agents/        (7 agents)"
+  echo "    commands/      (2 commands)"
+  echo "    hooks/         (2 hooks)"
+  echo "    skills/        (16 skills)"
   echo "    settings.json  (hook bindings, permissions)"
   echo ""
 
@@ -307,18 +294,14 @@ print_next_steps() {
     echo "     - Quick Commands 섹션을 프로젝트 실행 명령어로 변경"
   fi
   echo ""
-  echo "  2. .claude/skills/skill-rules.json 정리"
-  echo "     - 사용하지 않는 스킬의 enabled를 false로 변경"
-  echo "     - filePathTriggers 경로를 프로젝트 구조에 맞게 수정"
-  echo ""
-  echo "  3. docs/context/ 파일을 프로젝트 현재 상태로 갱신"
+  echo "  2. docs/context/ 파일을 프로젝트 현재 상태로 갱신"
   echo "     - dev-status.md: Sprint Focus, Current State 작성"
   echo "     - decisions.md: 기존 확정 결정 기록"
   echo ""
-  echo "  4. CLAUDE_INTEGRATION_GUIDE.md 참고하여 세부 커스터마이징"
+  echo "  3. CLAUDE_INTEGRATION_GUIDE.md 참고하여 세부 커스터마이징"
   echo ""
   echo -e "  ${YELLOW}범용 스킬 (즉시 사용 가능):${NC}"
-  echo "    skill-developer, mermaid, docx, pdf, pptx,"
+  echo "    mermaid, docx, pdf, pptx,"
   echo "    frontend-design, web-design-guidelines"
   echo ""
   echo -e "  ${YELLOW}프레임워크 스킬 (스택 확인 후 사용):${NC}"

@@ -1,0 +1,19 @@
+{
+  "tool_name": "MultiEdit",
+  "session_id": "smoke-test",
+  "tool_input": {
+    "file_path": "/project/frontend/src/app/page.tsx",
+    "edits": [
+      {
+        "file_path": "/project/frontend/src/app/page.tsx",
+        "old_string": "const x = 1",
+        "new_string": "const x = 2"
+      },
+      {
+        "file_path": "/project/backend/src/index.ts",
+        "old_string": "import express",
+        "new_string": "import { Router }"
+      }
+    ]
+  }
+}

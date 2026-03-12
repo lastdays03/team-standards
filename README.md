@@ -2,25 +2,20 @@
 
 Claude Code 스킬/에이전트/훅/커맨드 모음 — 다른 프로젝트에 이식 가능한 인프라 템플릿.
 
-한 줄 설치로 14개 스킬, 11개 에이전트, 8개 훅, 3개 커맨드 + 문서 체계를 기존 프로젝트에 적용할 수 있다.
+한 줄 설치로 16개 스킬, 7개 에이전트, 2개 훅, 2개 커맨드 + 문서 체계를 기존 프로젝트에 적용할 수 있다.
 
 ## 핵심 기능
 
 ### 스킬 자동 활성화
 
-사용자 프롬프트와 파일 컨텍스트를 `skill-rules.json`과 매칭하여 관련 스킬을 자동 주입한다. 수동 호출 불필요.
+각 스킬의 `description` 필드를 기반으로 Claude Code가 네이티브 매칭하여 관련 스킬을 자동 활성화한다. 별도 훅이나 규칙 파일 불필요.
 
-```
-UserPromptSubmit 훅 → 키워드/의도/파일경로/콘텐츠 패턴 매칭 → 관련 스킬 주입
-```
+### 훅
 
-### 2단계 훅 아키텍처
-
-| 단계 | 이벤트 | 역할 |
-|------|--------|------|
-| 선행 | UserPromptSubmit | 프롬프트 분석 → 스킬 자동 활성화 |
-| 추적 | PostToolUse | Edit/Write/MultiEdit 파일 변경 추적 |
-| 후행 | Stop | TypeScript 에러 검출 → 자동 수정 트리거 |
+| 이벤트 | 훅 | 역할 |
+|--------|-----|------|
+| PostToolUse | `post-tool-use-tracker.sh` | Edit/Write/MultiEdit 파일 변경 추적 |
+| Stop | `tsc-check.sh` | TypeScript 컴파일 에러 검출 |
 
 ### Context Memory 시스템
 
@@ -36,11 +31,10 @@ docs/context/
 
 ---
 
-## Skills (14개)
+## Skills (16개)
 
 | 스킬 | 설명 | 범용성 |
 |------|------|--------|
-| `skill-developer` | Claude Code 스킬 생성/관리 메타 가이드 — 트리거, 훅, 500줄 룰 | 범용 |
 | `frontend-design` | 프로덕션급 프론트엔드 UI 생성 디자인 가이드 | 범용 |
 | `mermaid` | Mermaid 다이어그램 생성 — 플로우차트, ER, 간트 등 23종 | 범용 |
 | `web-design-guidelines` | Web Interface Guidelines 기반 UI 접근성/UX 리뷰 | 범용 |
@@ -55,29 +49,24 @@ docs/context/
 | `vercel-react-best-practices` | Vercel 엔지니어링 기준 React/Next.js 성능 최적화 (58개 규칙) | React |
 | `error-tracking` | Sentry v8 에러 트래킹 및 성능 모니터링 통합 | Sentry |
 
-## Agents (11개)
+## Agents (7개)
 
 | 에이전트 | 설명 | 범용성 |
 |---------|------|--------|
-| `planner` | `docs/plans/active/`에 구조화된 개발 계획(plan/context/tasks) 생성 | 범용 |
+| `planner` | `docs/plans/active/`에 구조화된 개발 계획(plan/context/tasks) 생성, 리팩토링 계획 포함 | 범용 |
 | `plan-reviewer` | 구현 전 개발 계획 리뷰 — 리스크 평가, 갭 분석 | 범용 |
 | `code-architecture-reviewer` | 코드 품질, 아키텍처 일관성, 시스템 통합 리뷰 | 범용 |
 | `code-refactor-master` | 파일 재구성, 의존성 추적, 컴포넌트 추출 등 종합 리팩토링 | 범용 |
 | `documentation-architect` | 개발 문서, API 문서, 데이터 플로우 다이어그램 생성 | 범용 |
-| `web-research-specialist` | GitHub Issues, Reddit, SO 등에서 기술 이슈 리서치 | 범용 |
-| `refactor-planner` | 코드 구조 분석 후 단계별 리팩토링 전략 수립 | 범용 |
 | `frontend-error-fixer` | 빌드타임/런타임 프론트엔드 에러 진단 및 수정 | 프론트엔드 |
 | `auto-error-resolver` | TypeScript 컴파일 에러 자동 감지 및 수정 | TypeScript |
-| `auth-route-debugger` | 인증 관련 이슈(401/403, 쿠키, JWT) 디버깅 | 인증 |
-| `auth-route-tester` | 인증된 API 라우트 테스트 — DB 변경 검증 및 코드 리뷰 | 인증 |
 
-## Commands (3개)
+## Commands (2개)
 
 | 커맨드 | 설명 |
 |--------|------|
 | `/dev-docs` | `docs/plans/active/{task-name}/`에 plan/context/tasks 3파일 구조 생성 |
 | `/dev-docs-update` | 컨텍스트 컴팩션 전 진행 상태 업데이트, 완료 작업 아카이브 |
-| `/route-research-for-testing` | 편집된 라우트 자동 감지 후 auth-route-tester로 테스트 |
 
 ---
 
@@ -130,10 +119,10 @@ install-claude-env.sh [options] [target-path]
 
 ```
 .claude/
-  agents/           # 11 autonomous agents
-  commands/         # 3 slash commands
-  hooks/            # 8 hook files (6 .sh + 2 .ts)
-  skills/           # 14 skills + skill-rules.json
+  agents/           # 7 autonomous agents
+  commands/         # 2 slash commands
+  hooks/            # 2 hooks
+  skills/           # 16 skills
   settings.json     # Hook bindings & permissions
 docs/
   context/          # 세션 운영 (상태/결정/핸드오프/규칙)
@@ -156,6 +145,5 @@ CLAUDE_INTEGRATION_GUIDE.md  # 타 프로젝트 통합 가이드 (881줄)
 ## 설치 후 설정
 
 1. **CLAUDE.md 수정** — Backend/Frontend Architecture, Quick Commands를 프로젝트에 맞게 교체
-2. **skill-rules.json 정리** — 불필요 스킬의 `enabled`를 `false`로, `filePathTriggers` 경로 수정
-3. **docs/context/ 초기화** — dev-status, decisions를 프로젝트 현재 상태로 갱신
-4. **CLAUDE_INTEGRATION_GUIDE.md 참조** — 스킬/에이전트별 상세 커스터마이징 가이드
+2. **docs/context/ 초기화** — dev-status, decisions를 프로젝트 현재 상태로 갱신
+3. **CLAUDE_INTEGRATION_GUIDE.md 참조** — 스킬/에이전트별 상세 커스터마이징 가이드

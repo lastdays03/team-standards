@@ -11,16 +11,6 @@ Create or update `.claude/settings.json` in your project root:
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.sh"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Edit|MultiEdit|Write",
@@ -37,15 +27,7 @@ Create or update `.claude/settings.json` in your project root:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/stop-prettier-formatter.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/stop-build-check-enhanced.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/error-handling-reminder.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/tsc-check.sh"
           }
         ]
       }
@@ -54,14 +36,7 @@ Create or update `.claude/settings.json` in your project root:
 }
 ```
 
-### 2. Install Dependencies
-
-```bash
-cd .claude/hooks
-npm install
-```
-
-### 3. Set Execute Permissions
+### 2. Set Execute Permissions
 
 ```bash
 chmod +x .claude/hooks/*.sh
@@ -131,50 +106,6 @@ if [[ "$repo" == "my-service" ]]; then
 fi
 ```
 
-### Prettier Configuration
-
-The prettier hook searches for configs in this order:
-1. Current file directory (walking upward)
-2. Project root
-3. Falls back to Prettier defaults
-
-#### Custom Prettier Config Search
-
-Edit `.claude/hooks/stop-prettier-formatter.sh`, function `get_prettier_config()`:
-
-```bash
-# Add custom config locations
-if [[ -f "$project_root/config/.prettierrc" ]]; then
-    echo "$project_root/config/.prettierrc"
-    return
-fi
-```
-
-### Error Handling Reminders
-
-Configure file category detection in `.claude/hooks/error-handling-reminder.ts`:
-
-```typescript
-function getFileCategory(filePath: string): 'backend' | 'frontend' | 'database' | 'other' {
-    // Add custom patterns
-    if (filePath.includes('/my-custom-dir/')) return 'backend';
-    // ... existing patterns
-}
-```
-
-### Error Threshold Configuration
-
-Change when to recommend the auto-error-resolver agent.
-
-Edit `.claude/hooks/stop-build-check-enhanced.sh`:
-
-```bash
-# Default is 5 errors - change to your preference
-if [[ $total_errors -ge 10 ]]; then  # Now requires 10+ errors
-    # Recommend agent
-fi
-```
-
 ## Environment Variables
 
 ### Global Environment Variables
@@ -182,9 +113,6 @@ fi
 Set in your shell profile (`.bashrc`, `.zshrc`, etc.):
 
 ```bash
-# Disable error handling reminders
-export SKIP_ERROR_REMINDER=1
-
 # Custom project directory (if not using default)
 export CLAUDE_PROJECT_DIR=/path/to/your/project
 ```
@@ -194,7 +122,7 @@ export CLAUDE_PROJECT_DIR=/path/to/your/project
 Set before starting Claude Code:
 
 ```bash
-SKIP_ERROR_REMINDER=1 claude-code
+CLAUDE_PROJECT_DIR=/path/to/project claude-code
 ```
 
 ## Hook Execution Order
@@ -205,34 +133,28 @@ Stop hooks run in the order specified in `settings.json`:
 "Stop": [
   {
     "hooks": [
-      { "command": "...formatter.sh" },    // Runs FIRST
-      { "command": "...build-check.sh" },  // Runs SECOND
-      { "command": "...reminder.sh" }      // Runs THIRD
+      { "command": "...tsc-check.sh" }    // TypeScript compilation check
     ]
   }
 ]
 ```
 
-**Why this order matters:**
-1. Format files first (clean code)
-2. Then check for errors
-3. Finally show reminders
-
 ## Selective Hook Enabling
 
 You don't need all hooks. Choose what works for your project:
 
-### Minimal Setup (Skill Activation Only)
+### File Tracking Only (No Build Checking)
 
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [
+    "PostToolUse": [
       {
+        "matcher": "Edit|MultiEdit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-tracker.sh"
           }
         ]
       }
@@ -241,7 +163,7 @@ You don't need all hooks. Choose what works for your project:
 }
 ```
 
-### Build Checking Only (No Formatting)
+### Full Setup (Tracking + TypeScript Check)
 
 ```json
 {
@@ -262,37 +184,7 @@ You don't need all hooks. Choose what works for your project:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/stop-build-check-enhanced.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Formatting Only (No Build Checking)
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|MultiEdit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-tracker.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/stop-prettier-formatter.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/tsc-check.sh"
           }
         ]
       }
@@ -309,6 +201,8 @@ You don't need all hooks. Choose what works for your project:
 $CLAUDE_PROJECT_DIR/.claude/tsc-cache/[session_id]/
 ```
 
+The `session_id` is read from stdin JSON by the tsc-check hook.
+
 ### Manual Cache Cleanup
 
 ```bash
@@ -321,7 +215,7 @@ rm -rf $CLAUDE_PROJECT_DIR/.claude/tsc-cache/[session-id]
 
 ### Automatic Cleanup
 
-The build-check hook automatically cleans up session cache on successful builds.
+The tsc-check hook automatically cleans up session cache on successful builds.
 
 ## Troubleshooting Configuration
 
@@ -330,7 +224,6 @@ The build-check hook automatically cleans up session cache on successful builds.
 1. **Check registration:** Verify hook is in `.claude/settings.json`
 2. **Check permissions:** Run `chmod +x .claude/hooks/*.sh`
 3. **Check path:** Ensure `$CLAUDE_PROJECT_DIR` is set correctly
-4. **Check TypeScript:** Run `cd .claude/hooks && npx tsc` to check for errors
 
 ### False Positive Detections
 
@@ -353,15 +246,6 @@ fi
 1. Limit TypeScript checks to changed files only
 2. Use faster package managers (pnpm > npm)
 3. Add more skip conditions
-4. Disable Prettier for large files
-
-```bash
-# Skip large files in stop-prettier-formatter.sh
-file_size=$(wc -c < "$file" 2>/dev/null || echo 0)
-if [[ $file_size -gt 100000 ]]; then  # Skip files > 100KB
-    continue
-fi
-```
 
 ### Debugging Hooks
 
@@ -444,5 +328,3 @@ fi
 ## See Also
 
 - [README.md](./README.md) - Hooks overview
-- [../../docs/HOOKS_SYSTEM.md](../../docs/HOOKS_SYSTEM.md) - Complete hooks reference
-- [../../docs/SKILLS_SYSTEM.md](../../docs/SKILLS_SYSTEM.md) - Skills integration
