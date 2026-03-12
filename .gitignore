@@ -16,6 +16,9 @@
 
 .playwright-mcp
 
+# Skill eval workspace
+frontend-design-workspace/
+
 # Claude Code runtime cache
 .claude/tsc-cache/
 
