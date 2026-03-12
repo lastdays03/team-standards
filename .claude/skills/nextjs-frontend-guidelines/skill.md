@@ -1,6 +1,6 @@
 ---
 name: nextjs-frontend-guidelines
-description: "Next.js 15 frontend development guidelines for YGS (영영사) React 19/TypeScript application. Modern patterns including App Router, Server/Client Components, shadcn/ui components, Tailwind CSS 4, multi-method authentication (Firebase/Kakao/JWT), admin dashboard patterns, and Korean localization. Use when creating components, pages, API routes, fetching data, styling, or working with frontend code. Also trigger when '프론트엔드 개발', '컴포넌트 생성', '페이지 만들기', '스타일링', 'Next.js 라우팅', '서버 컴포넌트', '클라이언트 컴포넌트', '인증 구현', or any frontend architecture work."
+description: "Next.js 15 frontend development guidelines for YGS (영영사) React 19/TypeScript application. Covers App Router file conventions (layout/loading/error.tsx), Server vs Client Components ('use client' boundaries), shadcn/ui component customization (cva variants, cn() utility), Tailwind CSS 4 (@theme tokens, semantic colors), authentication (Firebase/Kakao/JWT cookies via serverAuth.ts), API client patterns (src/lib/api.ts), S3 image upload with client-side compression, next-intl Korean/English i18n, and project structure conventions. Use this skill whenever the user asks about Next.js page/component creation, shadcn/ui customization, Tailwind CSS 4 styling, App Router routing/layouts, authentication flows, API integration, file organization, i18n setup, or any YGS frontend development question. Also trigger on 'use client', 'server component', 'shadcn', 'cva', 'cn()', 'Tailwind', '@theme', 'App Router', 'layout.tsx', 'loading.tsx', 'serverAuth', 'api.ts', 'next-intl', 'S3 upload', '프론트엔드 개발', '컴포넌트 생성', '페이지 만들기', '스타일링', '라우팅', '인증 구현', or any frontend architecture work in this project."
 ---
 
 # Next.js 15 Frontend Development Guidelines for YGS
@@ -215,7 +215,7 @@ Multi-method auth system: Firebase Social (Google/Apple), Kakao OAuth, Custom JW
 - YGS brand: primary (Coral/Orange), gradients `from-amber-500 to-orange-500`
 - Responsive: `grid-cols-1 lg:grid-cols-4`, `hidden md:flex`, `px-4 sm:px-6 md:px-12`
 
-**[Complete Guide: resources/ui-styling.md](resources/ui-styling.md)** | Also see [resources/styling-guide.md](resources/styling-guide.md)
+**[Complete Guide: resources/ui-styling.md](resources/ui-styling.md)**
 
 ---
 
@@ -229,7 +229,7 @@ Multi-method auth system: Firebase Social (Google/Apple), Kakao OAuth, Custom JW
 - Loading: Route-level `loading.tsx` with Skeleton components
 - Error: Route-level `error.tsx` with Korean error messages and retry button
 
-**[Complete Guide: resources/app-router.md](resources/app-router.md)** | Also see [resources/routing-guide.md](resources/routing-guide.md)
+**[Complete Guide: resources/app-router.md](resources/app-router.md)**
 
 ---
 
@@ -297,8 +297,6 @@ Multi-method auth system: Firebase Social (Google/Apple), Kakao OAuth, Custom JW
 | Optimize performance | [performance.md](resources/performance.md) |
 | TypeScript types | [typescript-standards.md](resources/typescript-standards.md) |
 | Forms/Auth/API Routes | [common-patterns.md](resources/common-patterns.md) |
-| Full styling reference | [styling-guide.md](resources/styling-guide.md) |
-| Routing patterns | [routing-guide.md](resources/routing-guide.md) |
 | See full examples | [complete-examples.md](resources/complete-examples.md) |
 
 ---

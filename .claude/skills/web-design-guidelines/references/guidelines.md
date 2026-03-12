@@ -132,6 +132,125 @@ Source: vercel-labs/web-interface-guidelines
 - Second person; avoid first person
 - `&` over "and" where space-constrained
 
+### Design Quality
+
+- Visual hierarchy: one dominant element per section (size, weight, or color)—not everything equal
+- Spacing system: consistent spacing scale (4px/8px increments)—no arbitrary pixel values
+- Color contrast: text meets WCAG AA (4.5:1 body, 3:1 large text)—check with `contrast-ratio`
+- Typography pairing: max 2-3 font families—display + body + optional mono
+- Component consistency: same pattern for same purpose (don't mix card styles within one page)
+- Interactive feedback: every clickable element has hover/active/focus states—no "dead" buttons
+- Loading states: skeleton or spinner for async content—never blank space or layout jump
+- Empty states: meaningful message + action for empty lists/search/data—not blank or "No data"
+- Error states: inline field errors with recovery action—not just red border or generic toast
+- Responsive quality: test at 320px, 768px, 1024px, 1440px—no horizontal scroll, no overlap, no orphans
+- Whitespace intention: generous padding inside cards/sections, tighter within groups—hierarchy through space
+- Alignment: elements on a consistent grid—no "almost aligned" positioning
+- Icon sizing: icons match text line-height or follow 16/20/24px scale—not arbitrary sizes
+- Border & shadow consistency: one border-radius scale and shadow depth system per project
+- Color usage: semantic colors (success/warning/error/info) applied consistently—not ad-hoc hex values
+
+### Design Quality Bad/Good Examples
+
+**Visual hierarchy — no dominant element:**
+
+```tsx
+// Bad: everything same size and weight
+<div className="p-4">
+  <p className="text-base font-medium">Dashboard</p>
+  <p className="text-base font-medium">Total Users: 1,234</p>
+  <p className="text-base font-medium">Revenue: $45,000</p>
+  <p className="text-base font-medium">Active Sessions: 89</p>
+</div>
+
+// Good: clear hierarchy with size and weight
+<div className="p-6">
+  <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+  <div className="grid grid-cols-3 gap-4">
+    <div className="p-4 rounded-lg border">
+      <p className="text-sm text-muted-foreground">Total Users</p>
+      <p className="text-3xl font-bold tabular-nums">1,234</p>
+    </div>
+    ...
+  </div>
+</div>
+```
+
+**Interactive feedback — dead button:**
+
+```tsx
+// Bad: no hover/active state, no loading feedback
+<button className="bg-blue-500 text-white px-4 py-2 rounded">
+  Save
+</button>
+
+// Good: hover, active, focus, disabled, loading states
+<Button
+  className="hover:bg-primary/90 active:scale-[0.98] focus-visible:ring-2"
+  disabled={isPending}
+>
+  {isPending ? (
+    <>
+      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      Saving...
+    </>
+  ) : (
+    'Save'
+  )}
+</Button>
+```
+
+**Empty state — blank content:**
+
+```tsx
+// Bad: renders nothing when empty
+{items.length > 0 && items.map(item => <Card key={item.id} />)}
+
+// Good: meaningful empty state with action
+{items.length === 0 ? (
+  <div className="flex flex-col items-center py-12 text-center">
+    <InboxIcon className="h-12 w-12 text-muted-foreground mb-4" />
+    <h3 className="text-lg font-semibold mb-1">No items yet</h3>
+    <p className="text-sm text-muted-foreground mb-4">
+      Get started by creating your first item.
+    </p>
+    <Button onClick={onCreate}>Create Item</Button>
+  </div>
+) : (
+  items.map(item => <Card key={item.id} />)
+)}
+```
+
+**Spacing — arbitrary values:**
+
+```tsx
+// Bad: inconsistent arbitrary spacing
+<div className="mt-[13px] mb-[7px] px-[11px]">
+  <h2 className="mb-[5px]">Title</h2>
+  <p className="mt-[9px]">Content</p>
+</div>
+
+// Good: consistent spacing scale
+<div className="mt-4 mb-2 px-3">
+  <h2 className="mb-1.5">Title</h2>
+  <p className="mt-2">Content</p>
+</div>
+```
+
+**Accessibility — icon button without label:**
+
+```tsx
+// Bad: screen reader says "button"
+<button onClick={onClose}>
+  <X className="h-4 w-4" />
+</button>
+
+// Good: screen reader says "Close dialog"
+<button onClick={onClose} aria-label="Close dialog">
+  <X className="h-4 w-4" aria-hidden="true" />
+</button>
+```
+
 ### Anti-patterns (flag these)
 
 - `user-scalable=no` or `maximum-scale=1` disabling zoom

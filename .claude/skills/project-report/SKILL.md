@@ -5,6 +5,8 @@ description: "Generate a polished project status report suitable for external sh
 
 # Project Report Generator
 
+> **Example output**: See [references/example-report.md](references/example-report.md) for a sample report based on QWarty.
+
 Generate a professional project status report for external audiences. This report emphasizes accomplishments, architecture decisions, and forward-looking roadmap — not internal bugs or debt.
 
 **Distinguish from other skills:**

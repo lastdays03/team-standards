@@ -10,6 +10,24 @@ metadata:
 
 Generate high-quality Mermaid diagram code based on user requirements.
 
+## Setup & Dependencies
+
+Mermaid diagrams are plain text — no dependencies needed for code generation. To render diagrams as images:
+
+```bash
+# Optional: Mermaid CLI (PNG/SVG rendering)
+npm install -g @mermaid-js/mermaid-cli
+
+# Usage
+mmdc -i diagram.mmd -o diagram.png -w 1200 -H 600 -b white
+mmdc -i diagram.mmd -o diagram.svg  # SVG output
+```
+
+**Alternative rendering** (no install needed):
+- Paste code into [Mermaid Live Editor](https://mermaid.live)
+- GitHub/GitLab Markdown renders `mermaid` code blocks natively
+- VS Code: "Markdown Preview Mermaid Support" extension
+
 ## Workflow
 
 1. **Understand Requirements**: Analyze user description to determine the most suitable diagram type

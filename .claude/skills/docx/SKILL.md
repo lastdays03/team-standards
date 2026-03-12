@@ -10,6 +10,29 @@ license: Proprietary. LICENSE.txt has complete terms
 
 A .docx file is a ZIP archive containing XML files.
 
+## Setup & Dependencies
+
+```bash
+# Required: pandoc (text extraction & format conversion)
+brew install pandoc          # macOS
+apt-get install pandoc       # Ubuntu/Debian
+
+# Required: Node.js docx package (document creation)
+npm install -g docx
+
+# Optional: LibreOffice (PDF conversion, .doc → .docx conversion)
+brew install --cask libreoffice   # macOS
+
+# Optional: Poppler (PDF to image conversion)
+brew install poppler              # macOS
+apt-get install poppler-utils     # Ubuntu/Debian
+```
+
+**Verify installation:**
+```bash
+pandoc --version && node -e "require('docx')" && echo "All dependencies OK"
+```
+
 ## Quick Reference
 
 | Task | Approach |

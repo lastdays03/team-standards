@@ -18,6 +18,7 @@
 
 # Skill eval workspace
 frontend-design-workspace/
+skill-eval-workspace/
 
 # Claude Code runtime cache
 .claude/tsc-cache/

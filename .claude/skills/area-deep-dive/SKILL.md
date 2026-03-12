@@ -5,6 +5,8 @@ description: "Perform a focused deep-dive analysis on a specific area of the cod
 
 # Area Deep Dive Analysis
 
+> **Example output**: See [references/example-report.md](references/example-report.md) for a sample report based on QWarty.
+
 Generate a focused, detailed analysis report for a specific area of the codebase. This skill goes deep into one subsystem — reading actual code, tracing data flows, identifying patterns and anti-patterns, and producing actionable recommendations.
 
 **Distinguish from other skills:**

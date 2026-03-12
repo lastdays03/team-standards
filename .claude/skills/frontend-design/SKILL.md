@@ -57,3 +57,13 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Quality Review Workflow
+
+After generating UI code, use the **web-design-guidelines** skill to audit the output for:
+- Accessibility compliance (aria-labels, focus states, semantic HTML)
+- Interactive state completeness (hover, active, focus, loading, empty, error)
+- Design quality (visual hierarchy, spacing consistency, color contrast)
+- Performance patterns (image dimensions, lazy loading, virtualization)
+
+**Recommended flow**: Design with `frontend-design` → Review with `web-design-guidelines` → Fix findings → Ship.

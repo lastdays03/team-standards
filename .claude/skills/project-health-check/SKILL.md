@@ -5,6 +5,8 @@ description: "Run a comprehensive project health check and generate a Markdown r
 
 # Project Health Check
 
+> **Example output**: See [references/example-report.md](references/example-report.md) for a sample report based on QWarty.
+
 Generate a comprehensive project health report by analyzing the codebase across multiple dimensions — tests, builds, lint, dependencies, code patterns, and structural consistency. The report is saved as Markdown for tracking trends over time.
 
 **Distinguish from other skills:**

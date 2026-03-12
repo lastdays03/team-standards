@@ -10,6 +10,32 @@ license: Proprietary. LICENSE.txt has complete terms
 
 A user may ask you to create, edit, or analyze the contents of a .pptx file. A .pptx file is essentially a ZIP archive containing XML files and other resources that you can read or edit. You have different tools and workflows available for different tasks.
 
+## Setup & Dependencies
+
+```bash
+# Python: text extraction & XML manipulation
+pip install "markitdown[pptx]" defusedxml
+
+# Node.js: presentation creation (html2pptx workflow)
+cd .claude/skills/pptx && npm install
+# Installs: pptxgenjs, playwright, sharp, react-icons
+
+# Playwright browser (for HTML rendering)
+npx playwright install chromium
+
+# Optional: LibreOffice (PDF conversion)
+brew install --cask libreoffice   # macOS
+
+# Optional: Poppler (PDF to JPEG)
+brew install poppler              # macOS
+```
+
+**Verify installation:**
+```bash
+python -m markitdown --help && echo "markitdown OK"
+node -e "require('pptxgenjs')" && echo "pptxgenjs OK"
+```
+
 ## Reading and analyzing content
 
 ### Text extraction
