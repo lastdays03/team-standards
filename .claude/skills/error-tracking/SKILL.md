@@ -1,309 +1,226 @@
 ---
 name: error-tracking
-description: Add Sentry v8 error tracking and performance monitoring to your project services. Use this skill when adding error handling, creating new controllers, instrumenting cron jobs, or tracking database performance. ALL ERRORS MUST BE CAPTURED TO SENTRY - no exceptions.
+description: "Sentry error tracking and performance monitoring for Next.js 15 frontend and FastAPI backend. Use this skill when adding error handling, setting up Sentry integration, instrumenting API routes or server actions, tracking database performance, or adding custom spans. Also trigger when the user mentions 'Sentry', 'error tracking', 'error monitoring', '에러 추적', '에러 모니터링', 'capture exception', or wants to add observability to any part of the application."
 ---
 
-# Sentry v8 Error Tracking Skill
+# Sentry Error Tracking & Performance Monitoring
 
-## Purpose
-This skill enforces comprehensive Sentry v8 error tracking and performance monitoring across project services.
+Unified error tracking guide for the project's dual-stack architecture: **Next.js 15** (frontend) + **FastAPI** (backend). Each stack uses its own Sentry SDK with different initialization and capture patterns.
 
 ## When to Use This Skill
-- Adding error handling to any code
-- Creating new controllers or routes
-- Instrumenting cron jobs
-- Tracking database performance
-- Adding performance spans
-- Handling workflow errors
 
-## 🚨 CRITICAL RULE
+- Setting up Sentry in a new service
+- Adding error handling to routes, services, or components
+- Instrumenting async operations with custom spans
+- Tracking database query performance
+- Adding user context or tags to error events
+- Debugging why errors aren't appearing in Sentry
 
-**ALL ERRORS MUST BE CAPTURED TO SENTRY** - No exceptions. Never use console.error alone.
+## Stack Selection
 
-## Sentry Integration Patterns
+| Stack | SDK | Reference |
+|-------|-----|-----------|
+| **Next.js 15** (App Router) | `@sentry/nextjs` v8 | [nextjs-sentry.md](references/nextjs-sentry.md) |
+| **FastAPI** (async Python) | `sentry-sdk[fastapi]` v2 | [fastapi-sentry.md](references/fastapi-sentry.md) |
 
-### 1. Controller Error Handling
+Read the reference for your target stack. The patterns below are cross-cutting principles that apply to both.
 
-```typescript
-// ✅ CORRECT - Use BaseController
-import { BaseController } from '../controllers/BaseController';
+---
 
-export class MyController extends BaseController {
-    async myMethod() {
-        try {
-            // ... your code
-        } catch (error) {
-            this.handleError(error, 'myMethod'); // Automatically sends to Sentry
-        }
-    }
-}
-```
+## Quick Start
 
-### 2. Route Error Handling (Without BaseController)
-
-```typescript
-import * as Sentry from '@sentry/node';
-
-router.get('/route', async (req, res) => {
-    try {
-        // ... your code
-    } catch (error) {
-        Sentry.captureException(error, {
-            tags: { route: '/route', method: 'GET' },
-            extra: { userId: req.user?.id }
-        });
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-```
-
-### 3. Domain-Specific Error Handling
-
-```typescript
-import * as Sentry from '@sentry/node';
-
-// ✅ CORRECT - Capture with domain context
-Sentry.captureException(error, {
-    tags: {
-        domain: 'your-domain',
-        operation: 'operationName',
-    },
-    extra: {
-        entityId: 123,
-        userId: 'user-123',
-        metadata: { additionalInfo: 'value' }
-    }
-});
-```
-
-### 4. Cron Jobs (MANDATORY Pattern)
-
-```typescript
-#!/usr/bin/env node
-// FIRST LINE after shebang - CRITICAL!
-import '../instrument';
-import * as Sentry from '@sentry/node';
-
-async function main() {
-    return await Sentry.startSpan({
-        name: 'cron.job-name',
-        op: 'cron',
-        attributes: {
-            'cron.job': 'job-name',
-            'cron.startTime': new Date().toISOString(),
-        }
-    }, async () => {
-        try {
-            // Your cron job logic
-        } catch (error) {
-            Sentry.captureException(error, {
-                tags: {
-                    'cron.job': 'job-name',
-                    'error.type': 'execution_error'
-                }
-            });
-            console.error('[Job] Error:', error);
-            process.exit(1);
-        }
-    });
-}
-
-main()
-    .then(() => {
-        console.log('[Job] Completed successfully');
-        process.exit(0);
-    })
-    .catch((error) => {
-        console.error('[Job] Fatal error:', error);
-        process.exit(1);
-    });
-```
-
-### 5. Database Performance Monitoring
-
-```typescript
-import * as Sentry from '@sentry/node';
-
-// ✅ CORRECT - Wrap database operations with Sentry spans
-const result = await Sentry.startSpan({
-    name: 'db.findMany',
-    op: 'db.query',
-    attributes: { 'db.table': 'YourModel' }
-}, async () => {
-    return await db.yourModel.findMany({ take: 5 });
-});
-```
-
-### 6. Async Operations with Spans
-
-```typescript
-import * as Sentry from '@sentry/node';
-
-const result = await Sentry.startSpan({
-    name: 'operation.name',
-    op: 'operation.type',
-    attributes: {
-        'custom.attribute': 'value'
-    }
-}, async () => {
-    // Your async operation
-    return await someAsyncOperation();
-});
-```
-
-## Error Levels
-
-Use appropriate severity levels:
-
-- **fatal**: System is unusable (database down, critical service failure)
-- **error**: Operation failed, needs immediate attention
-- **warning**: Recoverable issues, degraded performance
-- **info**: Informational messages, successful operations
-- **debug**: Detailed debugging information (dev only)
-
-## Required Context
-
-```typescript
-import * as Sentry from '@sentry/node';
-
-Sentry.withScope((scope) => {
-    // ALWAYS include these if available
-    scope.setUser({ id: userId });
-    scope.setTag('service', 'your-service-name');
-    scope.setTag('environment', process.env.NODE_ENV);
-
-    // Add operation-specific context
-    scope.setContext('operation', {
-        type: 'operation.type',
-        entityId: 123
-    });
-
-    Sentry.captureException(error);
-});
-```
-
-## Sentry Initialization Template
-
-**Location**: `src/instrument.ts` (must be imported as the very first line in your entry point)
-
-```typescript
-import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
-
-Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV || 'development',
-    integrations: [
-        nodeProfilingIntegration(),
-    ],
-    tracesSampleRate: 0.1,
-    profilesSampleRate: 0.1,
-});
-```
-
-## Configuration (config.ini)
-
-```ini
-[sentry]
-dsn = your-sentry-dsn
-environment = development
-tracesSampleRate = 0.1
-profilesSampleRate = 0.1
-
-[databaseMonitoring]
-enableDbTracing = true
-slowQueryThreshold = 100
-logDbQueries = false
-dbErrorCapture = true
-enableN1Detection = true
-```
-
-## Testing Sentry Integration
-
-Add test endpoints to verify Sentry is working:
+### Frontend (Next.js 15)
 
 ```bash
-# Test basic error capture
-curl http://localhost:<port>/api/sentry/test-error
-
-# Test performance tracking
-curl http://localhost:<port>/api/sentry/test-performance
+npm install @sentry/nextjs
+# Or use the wizard:
+npx @sentry/wizard@latest -i nextjs
 ```
 
-Example test route:
+Key files: `instrumentation-client.ts`, `instrumentation.ts`, `sentry.server.config.ts`, `next.config.ts`
 
-```typescript
-router.get('/api/sentry/test-error', async (req, res) => {
-    try {
-        throw new Error('Sentry test error');
-    } catch (error) {
-        Sentry.captureException(error);
-        res.status(500).json({ message: 'Test error sent to Sentry' });
-    }
-});
+**[Complete Guide: references/nextjs-sentry.md](references/nextjs-sentry.md)**
+
+### Backend (FastAPI)
+
+```bash
+pip install "sentry-sdk[fastapi]"
 ```
 
-## Performance Monitoring
+Single init call — integrations auto-activate:
 
-### Requirements
+```python
+import sentry_sdk
 
-1. **All API endpoints** must have transaction tracking
-2. **Database queries > 100ms** are automatically flagged
-3. **N+1 queries** are detected and reported
-4. **Cron jobs** must track execution time
+sentry_sdk.init(
+    dsn=settings.SENTRY_DSN,
+    environment=settings.ENVIRONMENT,
+    traces_sample_rate=0.1,
+    send_default_pii=True,
+)
+```
 
-### Transaction Tracking
+**[Complete Guide: references/fastapi-sentry.md](references/fastapi-sentry.md)**
+
+---
+
+## Cross-Cutting Principles
+
+### 1. Auto-Capture vs Manual Capture
+
+Both SDKs auto-capture **unhandled** exceptions. Manual capture is needed when you catch an error and return a graceful response:
+
+```python
+# FastAPI
+try:
+    result = await service.process(data)
+except ValidationError as e:
+    sentry_sdk.capture_exception(e)         # manual — error is caught
+    raise HTTPException(status_code=400)
+```
 
 ```typescript
-import * as Sentry from '@sentry/node';
-
-// Automatic transaction tracking for Express routes
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
-
-// Manual transaction for custom operations
-const transaction = Sentry.startTransaction({
-    op: 'operation.type',
-    name: 'Operation Name',
-});
-
+// Next.js
 try {
-    // Your operation
-} finally {
-    transaction.finish();
+  const data = await fetchData();
+} catch (error) {
+  Sentry.captureException(error);           // manual — error is caught
+  return NextResponse.json({ error: "Failed" }, { status: 500 });
 }
 ```
 
-## Common Mistakes to Avoid
+**Rule of thumb**: if you `catch` and don't re-`raise`/`throw`, you must capture manually.
 
-❌ **NEVER** use console.error without Sentry
-❌ **NEVER** swallow errors silently
-❌ **NEVER** expose sensitive data in error context
-❌ **NEVER** use generic error messages without context
-❌ **NEVER** skip error handling in async operations
-❌ **NEVER** forget to import instrument.ts as first line in cron jobs
+### 2. Error Context Enrichment
+
+Errors without context are nearly useless for debugging. Always attach:
+
+| Context | Why | How |
+|---------|-----|-----|
+| **User** | Who experienced the error | `set_user({ id, email })` |
+| **Tags** | Searchable/filterable in Sentry UI | `set_tag("domain", "artwork")` |
+| **Extra data** | Debugging details (not indexed) | `set_context("payload", {...})` |
+| **Breadcrumbs** | Timeline leading to error | `add_breadcrumb(...)` |
+
+### 3. Error Severity Levels
+
+| Level | When to use | Example |
+|-------|-------------|---------|
+| **fatal** | System unusable | Database connection pool exhausted |
+| **error** | Operation failed | Payment processing failed |
+| **warning** | Degraded but functional | Rate limit approaching threshold |
+| **info** | Notable events | User completed onboarding |
+
+### 4. Sensitive Data
+
+Never include passwords, tokens, credit card numbers, or PII beyond user ID/email in error context. Use `before_send` (Python) or `beforeSend` (JS) to scrub if needed.
+
+### 5. Performance Monitoring
+
+Both SDKs support custom spans for tracing slow operations:
+
+```python
+# FastAPI — decorator or context manager
+@sentry_sdk.trace
+async def heavy_computation(data):
+    ...
+
+with sentry_sdk.start_span(name="upload_to_s3", op="http.client"):
+    await upload(file)
+```
+
+```typescript
+// Next.js — callback pattern
+const result = await Sentry.startSpan(
+  { name: "process-payment", op: "function" },
+  async (span) => {
+    span.setAttribute("amount", amount);
+    return await stripe.charges.create({ amount });
+  },
+);
+```
+
+### 6. Sampling Strategy
+
+| Environment | `traces_sample_rate` | `profiles_sample_rate` |
+|-------------|---------------------|----------------------|
+| Development | `1.0` (100%) | `1.0` |
+| Staging | `0.5` (50%) | `0.5` |
+| Production | `0.1` (10%) | `0.1` |
+
+Capture all errors (`sample_rate` defaults to `1.0`), but sample traces to control costs.
+
+---
 
 ## Implementation Checklist
 
 When adding Sentry to new code:
 
-- [ ] Imported Sentry or appropriate helper
-- [ ] All try/catch blocks capture to Sentry
-- [ ] Added meaningful context to errors
-- [ ] Used appropriate error level
-- [ ] No sensitive data in error messages
-- [ ] Added performance tracking for slow operations
-- [ ] Tested error handling paths
-- [ ] For cron jobs: instrument.ts imported first
+- [ ] Correct SDK imported (`@sentry/nextjs` or `sentry_sdk`)
+- [ ] Caught exceptions are manually captured before returning graceful response
+- [ ] Meaningful context attached (user, tags, domain info)
+- [ ] No sensitive data in error context
+- [ ] Custom spans added for slow operations (DB queries, external API calls)
+- [ ] `error.tsx` / `global-error.tsx` includes `Sentry.captureException` (Next.js)
+- [ ] `before_send` / `beforeSend` scrubs PII if applicable
 
-## Key Files (per service)
+## Common Mistakes
 
-- `src/instrument.ts` - Sentry initialization (imported first in entry point)
-- `src/controllers/BaseController.ts` - Controller base with error handling
-- `src/utils/sentryHelper.ts` - Domain-specific error helpers
-- `config.ini` or `.env` - Sentry DSN and sampling configuration
+| Mistake | Why it's a problem |
+|---------|--------------------|
+| `console.error(e)` without `captureException` | Error is logged locally but invisible in Sentry |
+| Swallowing errors in catch blocks | Silent failures are the hardest to debug |
+| Missing `Sentry.flush()` in serverless | Process terminates before event is sent |
+| Using `@sentry/node` in Next.js | Use `@sentry/nextjs` — it handles SSR/CSR split |
+| `SentryAsgiMiddleware` in FastAPI | Deprecated in v2. `FastApiIntegration` replaces it |
+| `configure_scope()` in Python | Removed in v2. Use `sentry_sdk.set_tag()` or `new_scope()` |
+
+---
+
+## Testing Sentry Integration
+
+### FastAPI
+
+```bash
+curl http://localhost:28080/api/v1/sentry/test-error
+```
+
+```python
+@router.get("/sentry/test-error")
+async def test_sentry():
+    raise RuntimeError("Sentry test error — if you see this in Sentry, it works")
+```
+
+### Next.js
+
+```typescript
+// app/api/sentry/test/route.ts
+export async function GET() {
+  throw new Error("Sentry test error");
+}
+```
+
+After triggering, verify the error appears in your Sentry project dashboard.
+
+---
+
+## Navigation Guide
+
+| Need to... | Read this reference |
+|------------|-------------------|
+| Set up Sentry in Next.js 15 | [nextjs-sentry.md](references/nextjs-sentry.md) |
+| Set up Sentry in FastAPI | [fastapi-sentry.md](references/fastapi-sentry.md) |
+| Handle Server Component errors | [nextjs-sentry.md § Server Components](references/nextjs-sentry.md) |
+| Handle Server Actions errors | [nextjs-sentry.md § Server Actions](references/nextjs-sentry.md) |
+| Instrument async Python code | [fastapi-sentry.md § Custom Spans](references/fastapi-sentry.md) |
+| Monitor database performance | [fastapi-sentry.md § Database Monitoring](references/fastapi-sentry.md) |
+| Add user context in FastAPI | [fastapi-sentry.md § Context Enrichment](references/fastapi-sentry.md) |
+| Set up error boundaries | [nextjs-sentry.md § Error Boundaries](references/nextjs-sentry.md) |
+
+---
 
 ## Related Skills
 
-- Use **fastapi-backend-guidelines** or **nextjs-frontend-guidelines** for framework-specific error handling patterns
-- Use **pytest-backend-testing** for testing error handling paths
+- **fastapi-backend-guidelines** — Backend architecture patterns (error handling via custom exceptions + ErrorHandlerMiddleware)
+- **nextjs-frontend-guidelines** — Frontend patterns (error.tsx, loading.tsx conventions)
+- **pytest-backend-testing** — Testing error handling paths

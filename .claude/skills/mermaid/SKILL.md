@@ -1,6 +1,6 @@
 ---
 name: mermaid
-description: Generate Mermaid diagrams from user requirements. Supports flowcharts, sequence diagrams, class diagrams, ER diagrams, Gantt charts, and 18 more diagram types.
+description: "Generate Mermaid diagrams from user requirements. Supports flowcharts, sequence diagrams, class diagrams, ER diagrams, Gantt charts, and 18 more diagram types. Also trigger when '다이어그램 그리기', '플로우차트', '시퀀스 다이어그램', 'ER 다이어그램', '간트 차트', '구조도', '흐름도', or any diagram/visualization request."
 allowed-tools: Read Write Edit
 metadata:
   argument-hint: "[diagram description or requirements]"

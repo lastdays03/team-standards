@@ -1,0 +1,38 @@
+{
+  "file": "frontend-design-workspace/iteration-1/eval-1-landing-page/old_skill/outputs/index.html",
+  "pass_count": 6,
+  "total": 6,
+  "pass_rate": 100.0,
+  "results": [
+    {
+      "text": "A1: CSS 변수 시스템 사용 (5개 이상)",
+      "passed": true,
+      "evidence": "Found 18 unique CSS variables: ['--bg-card-hover', '--font-mono', '--bg-primary', '--accent-gold-light', '--accent-gold-glow', '--border-accent', '--font-body', '--bg-card']..."
+    },
+    {
+      "text": "A2: 제네릭 폰트 미사용",
+      "passed": true,
+      "evidence": "Font families found: ['var(--font-body)', 'var(--font-display)', 'var(--font-mono)', 'var(--font-display)', 'var(--font-body)']. Font vars: ['Cormorant Garamond', 'DM Sans']. Generic as primary: False"
+    },
+    {
+      "text": "A3: Google Fonts 로딩",
+      "passed": true,
+      "evidence": "Found fonts.googleapis.com link"
+    },
+    {
+      "text": "A4: 애니메이션 존재",
+      "passed": true,
+      "evidence": "@keyframes: True (names: ['fadeInUp']), animation prop: True"
+    },
+    {
+      "text": "A5: 반응형 대응",
+      "passed": true,
+      "evidence": "@media queries: 2, clamp() uses: 2"
+    },
+    {
+      "text": "A7: 호버 인터랙션",
+      "passed": true,
+      "evidence": "Found 11 :hover rules"
+    }
+  ]
+}

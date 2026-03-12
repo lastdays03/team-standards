@@ -1,0 +1,38 @@
+{
+  "file": "frontend-design-workspace/iteration-1/eval-3-portfolio/old_skill/outputs/index.html",
+  "pass_count": 5,
+  "total": 6,
+  "pass_rate": 83.3,
+  "results": [
+    {
+      "text": "A1: CSS 변수 시스템 사용 (5개 이상)",
+      "passed": true,
+      "evidence": "Found 11 unique CSS variables: ['--serif', '--accent', '--sans', '--fg', '--fg-muted', '--accent-light', '--ease-out-expo', '--fg-dim']..."
+    },
+    {
+      "text": "A2: 제네릭 폰트 미사용",
+      "passed": true,
+      "evidence": "Font families found: ['var(--sans)', 'var(--sans)', 'var(--sans)', 'var(--sans)', 'var(--serif)']. Font vars: []. Generic as primary: False"
+    },
+    {
+      "text": "A3: Google Fonts 로딩",
+      "passed": true,
+      "evidence": "Found fonts.googleapis.com link"
+    },
+    {
+      "text": "A4: 애니메이션 존재",
+      "passed": false,
+      "evidence": "@keyframes: False (names: []), animation prop: False"
+    },
+    {
+      "text": "A5: 반응형 대응",
+      "passed": true,
+      "evidence": "@media queries: 2, clamp() uses: 2"
+    },
+    {
+      "text": "A7: 호버 인터랙션",
+      "passed": true,
+      "evidence": "Found 9 :hover rules"
+    }
+  ]
+}

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — KPI Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root {
+    --bg-primary: #0a0b0d;
+    --bg-card: #111215;
+    --bg-card-hover: #16181c;
+    --border-base: #1e2028;
+    --border-hover: #2a2d38;
+    --text-primary: #e8e9ed;
+    --text-secondary: #6b6f7e;
+    --text-muted: #424552;
+    --accent-up: #22c55e;
+    --accent-up-dim: rgba(34, 197, 94, 0.12);
+    --accent-down: #ef4444;
+    --accent-down-dim: rgba(239, 68, 68, 0.12);
+    --accent-neutral: #f59e0b;
+    --accent-neutral-dim: rgba(245, 158, 11, 0.12);
+    --spark-stroke: #3b82f6;
+    --spark-fill: rgba(59, 130, 246, 0.06);
+    --font-mono: 'DM Mono', 'SF Mono', monospace;
+    --font-sans: 'Instrument Sans', -apple-system, sans-serif;
+    --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--noise);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Subtle grid pattern overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border-base) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-base) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .dashboard {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1320px;
+  }
+
+  .dashboard-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding: 0 0.25rem;
+  }
+
+  .dashboard-header h1 {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-secondary);
+  }
+
+  .dashboard-header h1 span {
+    color: var(--text-muted);
+    margin-left: 0.75rem;
+  }
+
+  .dashboard-header .timestamp {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .timestamp .pulse {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent-up);
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); }
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-base);
+    border: 1px solid var(--border-base);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .kpi-card {
+    background: var(--bg-card);
+    padding: 1.5rem 1.75rem 1.25rem;
+    position: relative;
+    cursor: default;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: transparent;
+    transition: background 0.3s ease;
+  }
+
+  .kpi-card:hover {
+    background: var(--bg-card-hover);
+    z-index: 2;
+  }
+
+  .kpi-card:hover::before {
+    background: var(--card-accent, var(--spark-stroke));
+  }
+
+  /* Hover glow effect */
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 1px;
+    background: var(--card-accent, var(--spark-stroke));
+    box-shadow: 0 0 20px 4px var(--card-accent, var(--spark-stroke));
+    opacity: 0;
+    transition: width 0.4s ease, opacity 0.3s ease;
+  }
+
+  .kpi-card:hover::after {
+    width: 60%;
+    opacity: 0.3;
+  }
+
+  .kpi-label {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    margin-bottom: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .kpi-label .tag {
+    font-size: 0.5625rem;
+    padding: 1px 5px;
+    border: 1px solid var(--border-base);
+    border-radius: 2px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .kpi-card:hover .kpi-label .tag {
+    border-color: var(--border-hover);
+    color: var(--text-secondary);
+  }
+
+  .kpi-value-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .kpi-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+  }
+
+  .kpi-card:hover .kpi-value {
+    color: #fff;
+  }
+
+  .kpi-value .unit {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 2px;
+    letter-spacing: 0;
+  }
+
+  .kpi-delta {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.02em;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .kpi-card:hover .kpi-delta {
+    transform: translateY(-1px);
+  }
+
+  .kpi-delta.up {
+    color: var(--accent-up);
+    background: var(--accent-up-dim);
+  }
+
+  .kpi-delta.down {
+    color: var(--accent-down);
+    background: var(--accent-down-dim);
+  }
+
+  .kpi-delta.neutral {
+    color: var(--accent-neutral);
+    background: var(--accent-neutral-dim);
+  }
+
+  .kpi-sparkline {
+    width: 100%;
+    height: 40px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .kpi-card:hover .kpi-sparkline {
+    opacity: 1;
+  }
+
+  .sparkline-path {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sparkline-area {
+    opacity: 0.15;
+    transition: opacity 0.3s ease;
+  }
+
+  .kpi-card:hover .sparkline-area {
+    opacity: 0.25;
+  }
+
+  .sparkline-dot {
+    transition: r 0.2s ease, opacity 0.2s ease;
+  }
+
+  .kpi-card:hover .sparkline-dot {
+    r: 3;
+    opacity: 1;
+  }
+
+  .kpi-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.625rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid var(--border-base);
+    transition: border-color 0.3s ease;
+  }
+
+  .kpi-card:hover .kpi-footer {
+    border-color: var(--border-hover);
+  }
+
+  .kpi-footer-label {
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .kpi-footer-value {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  /* Individual card accents */
+  .kpi-card:nth-child(1) { --card-accent: #3b82f6; }
+  .kpi-card:nth-child(2) { --card-accent: #8b5cf6; }
+  .kpi-card:nth-child(3) { --card-accent: #06b6d4; }
+  .kpi-card:nth-child(4) { --card-accent: #f59e0b; }
+
+  .kpi-card:nth-child(1) .sparkline-path { stroke: #3b82f6; }
+  .kpi-card:nth-child(1) .sparkline-area { fill: #3b82f6; }
+  .kpi-card:nth-child(1) .sparkline-dot { fill: #3b82f6; }
+
+  .kpi-card:nth-child(2) .sparkline-path { stroke: #8b5cf6; }
+  .kpi-card:nth-child(2) .sparkline-area { fill: #8b5cf6; }
+  .kpi-card:nth-child(2) .sparkline-dot { fill: #8b5cf6; }
+
+  .kpi-card:nth-child(3) .sparkline-path { stroke: #06b6d4; }
+  .kpi-card:nth-child(3) .sparkline-area { fill: #06b6d4; }
+  .kpi-card:nth-child(3) .sparkline-dot { fill: #06b6d4; }
+
+  .kpi-card:nth-child(4) .sparkline-path { stroke: #f59e0b; }
+  .kpi-card:nth-child(4) .sparkline-area { fill: #f59e0b; }
+  .kpi-card:nth-child(4) .sparkline-dot { fill: #f59e0b; }
+
+  /* Card entrance animation */
+  @keyframes cardReveal {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .kpi-card:nth-child(1) { animation: cardReveal 0.5s ease-out 0.05s both; }
+  .kpi-card:nth-child(2) { animation: cardReveal 0.5s ease-out 0.12s both; }
+  .kpi-card:nth-child(3) { animation: cardReveal 0.5s ease-out 0.19s both; }
+  .kpi-card:nth-child(4) { animation: cardReveal 0.5s ease-out 0.26s both; }
+
+  /* Sparkline draw animation */
+  @keyframes drawLine {
+    from { stroke-dashoffset: 500; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  .sparkline-path {
+    stroke-dasharray: 500;
+    animation: drawLine 1.2s ease-out 0.4s both;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .kpi-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .kpi-grid {
+      grid-template-columns: 1fr;
+    }
+    .dashboard-header {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+  <header class="dashboard-header">
+    <h1>KPI Overview <span>// Admin Panel</span></h1>
+    <div class="timestamp"><span class="pulse"></span>Live &mdash; 2026-03-12 14:32 KST</div>
+  </header>
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<script>
+const kpiData = [
+  {
+    label: 'Total Revenue',
+    tag: 'MTD',
+    value: '842.6',
+    unit: 'M',
+    delta: '+12.4%',
+    direction: 'up',
+    footerLabel: 'Target',
+    footerValue: '920M (91.6%)',
+    points: [28, 35, 32, 40, 38, 45, 42, 50, 48, 55, 52, 58, 62, 60, 68, 65, 72, 70, 78, 82]
+  },
+  {
+    label: 'Active Users',
+    tag: 'DAU',
+    value: '24,891',
+    unit: '',
+    delta: '+8.2%',
+    direction: 'up',
+    footerLabel: 'Peak Today',
+    footerValue: '31,204 @ 13:00',
+    points: [45, 42, 48, 52, 50, 55, 58, 54, 60, 62, 58, 65, 70, 68, 72, 75, 72, 78, 80, 76]
+  },
+  {
+    label: 'Conversion Rate',
+    tag: 'CVR',
+    value: '3.42',
+    unit: '%',
+    delta: '-0.3%',
+    direction: 'down',
+    footerLabel: '7-day Avg',
+    footerValue: '3.58%',
+    points: [65, 68, 62, 60, 64, 58, 55, 60, 56, 52, 55, 50, 48, 52, 46, 50, 45, 48, 44, 42]
+  },
+  {
+    label: 'Avg Response',
+    tag: 'P95',
+    value: '187',
+    unit: 'ms',
+    delta: '+2.1%',
+    direction: 'neutral',
+    footerLabel: 'SLA Threshold',
+    footerValue: '< 250ms OK',
+    points: [30, 28, 35, 32, 38, 34, 30, 36, 32, 28, 34, 30, 26, 32, 28, 24, 30, 26, 22, 28]
+  }
+];
+
+function generateSparklineSVG(points, cardIndex) {
+  const width = 280;
+  const height = 40;
+  const padding = 2;
+  const n = points.length;
+
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const range = max - min || 1;
+
+  const coords = points.map((p, i) => ({
+    x: padding + (i / (n - 1)) * (width - padding * 2),
+    y: padding + (1 - (p - min) / range) * (height - padding * 2)
+  }));
+
+  // Build smooth curve using catmull-rom to bezier conversion
+  let pathD = `M ${coords[0].x},${coords[0].y}`;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const p0 = coords[Math.max(0, i - 1)];
+    const p1 = coords[i];
+    const p2 = coords[i + 1];
+    const p3 = coords[Math.min(coords.length - 1, i + 2)];
+
+    const tension = 0.3;
+    const cp1x = p1.x + (p2.x - p0.x) * tension;
+    const cp1y = p1.y + (p2.y - p0.y) * tension;
+    const cp2x = p2.x - (p3.x - p1.x) * tension;
+    const cp2y = p2.y - (p3.y - p1.y) * tension;
+
+    pathD += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+  }
+
+  // Area path (close to bottom)
+  const areaD = pathD + ` L ${coords[n - 1].x},${height} L ${coords[0].x},${height} Z`;
+
+  const lastPoint = coords[n - 1];
+
+  return `
+    <svg class="kpi-sparkline" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="grad${cardIndex}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-opacity="1" />
+          <stop offset="100%" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path class="sparkline-area" d="${areaD}" fill="url(#grad${cardIndex})" />
+      <path class="sparkline-path" d="${pathD}" />
+      <circle class="sparkline-dot" cx="${lastPoint.x}" cy="${lastPoint.y}" r="2" opacity="0.6" />
+    </svg>
+  `;
+}
+
+function renderCards() {
+  const grid = document.getElementById('kpiGrid');
+
+  grid.innerHTML = kpiData.map((kpi, i) => `
+    <div class="kpi-card">
+      <div class="kpi-label">
+        ${kpi.label}
+        <span class="tag">${kpi.tag}</span>
+      </div>
+      <div class="kpi-value-row">
+        <div class="kpi-value">
+          ${kpi.value}${kpi.unit ? `<span class="unit">${kpi.unit}</span>` : ''}
+        </div>
+        <div class="kpi-delta ${kpi.direction}">
+          ${kpi.delta}
+        </div>
+      </div>
+      ${generateSparklineSVG(kpi.points, i)}
+      <div class="kpi-footer">
+        <span class="kpi-footer-label">${kpi.footerLabel}</span>
+        <span class="kpi-footer-value">${kpi.footerValue}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderCards();
+</script>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 name: nextjs-frontend-guidelines
-description: Next.js 15 frontend development guidelines for YGS (영영사) React 19/TypeScript application. Modern patterns including App Router, Server/Client Components, shadcn/ui components, Tailwind CSS 4, multi-method authentication (Firebase/Kakao/JWT), admin dashboard patterns, and Korean localization. Use when creating components, pages, API routes, fetching data, styling, or working with frontend code.
+description: "Next.js 15 frontend development guidelines for YGS (영영사) React 19/TypeScript application. Modern patterns including App Router, Server/Client Components, shadcn/ui components, Tailwind CSS 4, multi-method authentication (Firebase/Kakao/JWT), admin dashboard patterns, and Korean localization. Use when creating components, pages, API routes, fetching data, styling, or working with frontend code. Also trigger when '프론트엔드 개발', '컴포넌트 생성', '페이지 만들기', '스타일링', 'Next.js 라우팅', '서버 컴포넌트', '클라이언트 컴포넌트', '인증 구현', or any frontend architecture work."
 ---
 
 # Next.js 15 Frontend Development Guidelines for YGS

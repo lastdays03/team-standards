@@ -1,6 +1,6 @@
 ---
 name: vercel-react-best-practices
-description: Performance optimization ruleset from Vercel Engineering for diagnosing and fixing React/Next.js performance bottlenecks. Use when optimizing render performance, eliminating request waterfalls, reducing bundle size, parallelizing data fetching, or profiling re-render overhead.
+description: "Performance optimization ruleset from Vercel Engineering for diagnosing and fixing React/Next.js performance bottlenecks. Use when optimizing render performance, eliminating request waterfalls, reducing bundle size, parallelizing data fetching, or profiling re-render overhead. Also trigger when '성능 최적화', '렌더링 성능', '번들 사이즈', '리렌더링', '워터폴 제거', '데이터 페칭 최적화', or any React/Next.js performance work."
 license: MIT
 metadata:
   author: vercel

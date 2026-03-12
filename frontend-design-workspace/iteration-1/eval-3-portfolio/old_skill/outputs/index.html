@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATELIER NOIR — Selected Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0b0a;
+    --bg-elevated: #151413;
+    --fg: #e8e4df;
+    --fg-muted: #8a847c;
+    --fg-dim: #4a4640;
+    --accent: #c4553a;
+    --accent-light: #e07a5f;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Outfit', system-ui, sans-serif;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-weight: 300;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ─── Grain overlay ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ─── Header ─── */
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3.5rem;
+    mix-blend-mode: difference;
+  }
+
+  .logo {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .header-nav a {
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color 0.4s ease;
+  }
+
+  .header-nav a:hover {
+    color: var(--fg);
+  }
+
+  /* ─── Hero / Title Section ─── */
+  .portfolio-hero {
+    padding: 12rem 3.5rem 6rem;
+    position: relative;
+  }
+
+  .portfolio-hero::before {
+    content: '';
+    position: absolute;
+    top: 8rem;
+    right: 3.5rem;
+    width: 320px;
+    height: 1px;
+    background: var(--fg-dim);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 0.95;
+    color: var(--fg);
+    max-width: 900px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent-light);
+  }
+
+  .hero-description {
+    margin-top: 3rem;
+    margin-left: auto;
+    max-width: 420px;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--fg-muted);
+    font-weight: 200;
+  }
+
+  /* ─── Portfolio Grid ─── */
+  .portfolio-grid {
+    padding: 2rem 3.5rem 8rem;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ─── Project Card ─── */
+  .project {
+    position: relative;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+  }
+
+  .project.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .project:nth-child(1) { grid-column: 1 / 8; }
+  .project:nth-child(2) { grid-column: 8 / 13; margin-top: 8rem; }
+  .project:nth-child(3) { grid-column: 2 / 6; margin-top: -2rem; }
+  .project:nth-child(4) { grid-column: 6 / 13; }
+  .project:nth-child(5) { grid-column: 1 / 7; margin-top: 4rem; }
+  .project:nth-child(6) { grid-column: 8 / 13; margin-top: -4rem; }
+
+  .project-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--bg-elevated);
+  }
+
+  .project:nth-child(1) .project-image-wrapper { aspect-ratio: 4 / 3; }
+  .project:nth-child(2) .project-image-wrapper { aspect-ratio: 3 / 4; }
+  .project:nth-child(3) .project-image-wrapper { aspect-ratio: 1 / 1.2; }
+  .project:nth-child(4) .project-image-wrapper { aspect-ratio: 16 / 9; }
+  .project:nth-child(5) .project-image-wrapper { aspect-ratio: 3 / 4; }
+  .project:nth-child(6) .project-image-wrapper { aspect-ratio: 4 / 5; }
+
+  .project-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 1.2s var(--ease-out-expo), filter 0.6s ease;
+    filter: grayscale(0.3) brightness(0.85);
+  }
+
+  .project-image-wrapper:hover img {
+    transform: scale(1.08);
+    filter: grayscale(0) brightness(1);
+  }
+
+  /* Overlay */
+  .project-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 30%,
+      rgba(12, 11, 10, 0.85) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem;
+    pointer-events: none;
+  }
+
+  .project-image-wrapper:hover .project-overlay {
+    opacity: 1;
+  }
+
+  .overlay-category {
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 0.5rem;
+    transform: translateY(12px);
+    transition: transform 0.5s var(--ease-out-expo) 0.05s, opacity 0.4s ease 0.05s;
+    opacity: 0;
+  }
+
+  .project-image-wrapper:hover .overlay-category {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .overlay-title {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--fg);
+    transform: translateY(15px);
+    transition: transform 0.5s var(--ease-out-expo) 0.1s, opacity 0.4s ease 0.1s;
+    opacity: 0;
+  }
+
+  .project-image-wrapper:hover .overlay-title {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .overlay-cta {
+    margin-top: 1rem;
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transform: translateY(15px);
+    transition: transform 0.5s var(--ease-out-expo) 0.15s, opacity 0.4s ease 0.15s;
+    opacity: 0;
+  }
+
+  .project-image-wrapper:hover .overlay-cta {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .overlay-cta::after {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.4s var(--ease-out-expo);
+  }
+
+  .project-image-wrapper:hover .overlay-cta::after {
+    width: 40px;
+  }
+
+  /* ─── Project Number ─── */
+  .project-number {
+    position: absolute;
+    top: -0.6rem;
+    left: -0.8rem;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 4.5rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--fg-dim);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity 0.4s ease, -webkit-text-stroke-color 0.4s ease;
+  }
+
+  .project:hover .project-number {
+    opacity: 0.8;
+    -webkit-text-stroke-color: var(--accent);
+  }
+
+  /* ─── Project Meta (below image) ─── */
+  .project-meta {
+    padding: 1.2rem 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .project-title {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--fg);
+    letter-spacing: 0.01em;
+  }
+
+  .project-year {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--fg-dim);
+  }
+
+  .project-tags {
+    margin-top: 0.4rem;
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    font-weight: 200;
+    letter-spacing: 0.1em;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+  }
+
+  /* ─── Divider ─── */
+  .section-divider {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 4rem 0;
+  }
+
+  .section-divider .line {
+    flex: 1;
+    height: 1px;
+    background: var(--fg-dim);
+    opacity: 0.3;
+  }
+
+  .section-divider .label {
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    white-space: nowrap;
+  }
+
+  /* ─── Footer ─── */
+  .portfolio-footer {
+    padding: 6rem 3.5rem;
+    border-top: 1px solid rgba(138, 132, 124, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-cta {
+    max-width: 500px;
+  }
+
+  .footer-cta h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+    color: var(--fg);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-cta h2 em {
+    font-style: italic;
+    color: var(--accent-light);
+  }
+
+  .footer-cta p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--fg-muted);
+    font-weight: 200;
+  }
+
+  .footer-contact {
+    text-align: right;
+  }
+
+  .footer-contact a {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    transition: gap 0.4s var(--ease-out-expo);
+  }
+
+  .footer-contact a:hover {
+    gap: 1.5rem;
+  }
+
+  .footer-contact a::after {
+    content: '\2192';
+    font-size: 1.1rem;
+  }
+
+  .footer-copyright {
+    margin-top: 1.5rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--fg-dim);
+  }
+
+  /* ─── Scroll progress line ─── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 200;
+    transform-origin: left;
+    transform: scaleX(0);
+    width: 100%;
+    transition: none;
+  }
+
+  /* ─── Side decoration ─── */
+  .side-text {
+    position: fixed;
+    left: 1.2rem;
+    bottom: 2rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--sans);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    z-index: 50;
+    mix-blend-mode: difference;
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1024px) {
+    .site-header { padding: 1.5rem 2rem; }
+    .portfolio-hero { padding: 10rem 2rem 4rem; }
+    .portfolio-grid { padding: 2rem 2rem 6rem; gap: 1.5rem; }
+    .portfolio-footer { padding: 4rem 2rem; }
+
+    .project:nth-child(1) { grid-column: 1 / 8; }
+    .project:nth-child(2) { grid-column: 8 / 13; margin-top: 4rem; }
+    .project:nth-child(3) { grid-column: 1 / 7; margin-top: 0; }
+    .project:nth-child(4) { grid-column: 7 / 13; }
+    .project:nth-child(5) { grid-column: 1 / 7; margin-top: 2rem; }
+    .project:nth-child(6) { grid-column: 7 / 13; margin-top: -2rem; }
+  }
+
+  @media (max-width: 768px) {
+    .portfolio-hero::before { display: none; }
+    .header-nav { display: none; }
+    .side-text { display: none; }
+    .portfolio-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    .project:nth-child(n) {
+      grid-column: 1 / -1 !important;
+      margin-top: 0 !important;
+    }
+    .project-number { font-size: 3rem; top: -0.4rem; left: -0.3rem; }
+    .portfolio-footer {
+      flex-direction: column;
+      gap: 3rem;
+      align-items: flex-start;
+    }
+    .footer-contact { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="side-text">Atelier Noir &mdash; Portfolio 2024</div>
+
+<header class="site-header">
+  <div class="logo">Atelier Noir</div>
+  <nav>
+    <ul class="header-nav">
+      <li><a href="#">Work</a></li>
+      <li><a href="#">Studio</a></li>
+      <li><a href="#">Journal</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="portfolio-hero">
+  <p class="hero-eyebrow">Selected Works &mdash; 2021 / 2024</p>
+  <h1 class="hero-title">Crafting <em>visual<br>narratives</em> that<br>resonate</h1>
+  <p class="hero-description">
+    A curated collection of our most distinctive projects &mdash; spanning brand identity,
+    editorial design, digital experiences, and spatial installations. Each piece represents
+    a dialogue between concept and craft.
+  </p>
+</section>
+
+<div class="portfolio-grid">
+
+  <!-- Project 01 -->
+  <article class="project" data-delay="0">
+    <span class="project-number">01</span>
+    <div class="project-image-wrapper">
+      <img src="https://picsum.photos/seed/noir01/1200/900" alt="Meridian Brand Identity" loading="lazy">
+      <div class="project-overlay">
+        <span class="overlay-category">Brand Identity</span>
+        <span class="overlay-title">A complete visual system for a luxury watchmaker rooted in celestial geometry</span>
+        <span class="overlay-cta">View project</span>
+      </div>
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3 class="project-title">Meridian Horology</h3>
+        <p class="project-tags">Identity &bull; Art Direction &bull; Print</p>
+      </div>
+      <span class="project-year">2024</span>
+    </div>
+  </article>
+
+  <!-- Project 02 -->
+  <article class="project" data-delay="150">
+    <span class="project-number">02</span>
+    <div class="project-image-wrapper">
+      <img src="https://picsum.photos/seed/noir02/800/1100" alt="Voss Architecture" loading="lazy">
+      <div class="project-overlay">
+        <span class="overlay-category">Digital Experience</span>
+        <span class="overlay-title">An immersive web presence for Scandinavian architecture</span>
+        <span class="overlay-cta">View project</span>
+      </div>
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3 class="project-title">Voss Architecture</h3>
+        <p class="project-tags">Web &bull; Motion &bull; 3D</p>
+      </div>
+      <span class="project-year">2024</span>
+    </div>
+  </article>
+
+  <!-- Project 03 -->
+  <article class="project" data-delay="0">
+    <span class="project-number">03</span>
+    <div class="project-image-wrapper">
+      <img src="https://picsum.photos/seed/noir03/700/840" alt="Terroir Magazine" loading="lazy">
+      <div class="project-overlay">
+        <span class="overlay-category">Editorial Design</span>
+        <span class="overlay-title">Quarterly publication exploring the intersection of food and place</span>
+        <span class="overlay-cta">View project</span>
+      </div>
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3 class="project-title">Terroir Quarterly</h3>
+        <p class="project-tags">Editorial &bull; Typography &bull; Photography</p>
+      </div>
+      <span class="project-year">2023</span>
+    </div>
+  </article>
+
+  <!-- Project 04 -->
+  <article class="project" data-delay="100">
+    <span class="project-number">04</span>
+    <div class="project-image-wrapper">
+      <img src="https://picsum.photos/seed/noir04/1400/788" alt="Luminal Exhibition" loading="lazy">
+      <div class="project-overlay">
+        <span class="overlay-category">Spatial Design</span>
+        <span class="overlay-title">An exhibition identity merging light, sound, and tactile surfaces</span>
+        <span class="overlay-cta">View project</span>
+      </div>
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3 class="project-title">Luminal &mdash; Light Exhibition</h3>
+        <p class="project-tags">Exhibition &bull; Identity &bull; Wayfinding</p>
+      </div>
+      <span class="project-year">2023</span>
+    </div>
+  </article>
+
+  <!-- Divider -->
+  <div class="section-divider">
+    <span class="line"></span>
+    <span class="label">Continued</span>
+    <span class="line"></span>
+  </div>
+
+  <!-- Project 05 -->
+  <article class="project" data-delay="0">
+    <span class="project-number">05</span>
+    <div class="project-image-wrapper">
+      <img src="https://picsum.photos/seed/noir05/900/1200" alt="Forma Ceramics" loading="lazy">
+      <div class="project-overlay">
+        <span class="overlay-category">Packaging &amp; Identity</span>
+        <span class="overlay-title">Earthy, tactile branding for an artisanal ceramics studio</span>
+        <span class="overlay-cta">View project</span>
+      </div>
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3 class="project-title">Forma Ceramics</h3>
+        <p class="project-tags">Packaging &bull; Brand &bull; Photography</p>
+      </div>
+      <span class="project-year">2022</span>
+    </div>
+  </article>
+
+  <!-- Project 06 -->
+  <article class="project" data-delay="150">
+    <span class="project-number">06</span>
+    <div class="project-image-wrapper">
+      <img src="https://picsum.photos/seed/noir06/800/1000" alt="Nocturne Film Festival" loading="lazy">
+      <div class="project-overlay">
+        <span class="overlay-category">Campaign</span>
+        <span class="overlay-title">A cinematic identity for an independent film festival after dark</span>
+        <span class="overlay-cta">View project</span>
+      </div>
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3 class="project-title">Nocturne Film Festival</h3>
+        <p class="project-tags">Campaign &bull; Motion &bull; Print</p>
+      </div>
+      <span class="project-year">2021</span>
+    </div>
+  </article>
+
+</div>
+
+<footer class="portfolio-footer">
+  <div class="footer-cta">
+    <h2>Let&rsquo;s build<br>something <em>remarkable</em></h2>
+    <p>
+      We partner with brands, studios, and cultural institutions who believe
+      design should provoke feeling, not just function.
+    </p>
+  </div>
+  <div class="footer-contact">
+    <a href="mailto:hello@ateliernoir.studio">Start a conversation</a>
+    <p class="footer-copyright">&copy; 2024 Atelier Noir. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Scroll progress indicator
+  const progressBar = document.getElementById('scrollProgress');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+    progressBar.style.transform = `scaleX(${progress})`;
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // Scroll-triggered reveal with staggered delays
+  const projects = document.querySelectorAll('.project');
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px 0px -80px 0px',
+    threshold: 0.15
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = parseInt(entry.target.dataset.delay) || 0;
+        setTimeout(() => {
+          entry.target.classList.add('is-visible');
+        }, delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  projects.forEach(project => observer.observe(project));
+
+  // Divider reveal
+  const dividers = document.querySelectorAll('.section-divider');
+  const dividerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        dividerObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  dividers.forEach(d => {
+    d.style.opacity = '0';
+    d.style.transform = 'translateY(20px)';
+    d.style.transition = 'opacity 0.8s ease, transform 0.8s var(--ease-out-expo)';
+    dividerObserver.observe(d);
+  });
+</script>
+
+</body>
+</html>

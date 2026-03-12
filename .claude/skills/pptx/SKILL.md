@@ -1,6 +1,6 @@
 ---
 name: pptx
-description: "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks"
+description: "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, (5) Applying brand guidelines or design systems (VRL, Anthropic, etc.) to slides, or any other presentation tasks. Also trigger when '발표 자료', '프레젠테이션 만들기', 'PPT 작성', '슬라이드 편집', '발표자 노트', or any .pptx-related work."
 license: Proprietary. LICENSE.txt has complete terms
 ---
 
@@ -43,6 +43,16 @@ You need raw XML access for: comments, speaker notes, slide layouts, animations,
 1. **Read theme file**: Check `ppt/theme/theme1.xml` for colors (`<a:clrScheme>`) and fonts (`<a:fontScheme>`)
 2. **Sample slide content**: Examine `ppt/slides/slide1.xml` for actual font usage (`<a:rPr>`) and colors
 3. **Search for patterns**: Use grep to find color (`<a:solidFill>`, `<a:srgbClr>`) and font references across all XML files
+
+## Brand & Design Systems
+
+Pre-built design systems are available in `designs/` for consistent branded presentations:
+
+- [`designs/brand-vrl.md`](designs/brand-vrl.md) — VRL brand: lime green (#BDFF00) on dark navy (#1E293B), logo asset included (`designs/assets/vrl-logo.png`)
+- [`designs/brand-anthropic.md`](designs/brand-anthropic.md) — Anthropic brand: warm neutrals (#141413/#faf9f5), orange accent (#d97757), Poppins/Lora typography
+- [`designs/minimal-bw-red.md`](designs/minimal-bw-red.md) — Minimal B&W + Red: high contrast, clean layout (#000/#fff/#FF3B30)
+
+When the user requests a specific brand or design system, read the relevant file from `designs/` and apply its color palette, typography, and slide templates.
 
 ## Creating a new PowerPoint presentation **without a template**
 

@@ -1,0 +1,14 @@
+{
+  "eval_id": 3,
+  "eval_name": "portfolio-gallery",
+  "prompt": "크리에이티브 에이전시 웹사이트의 포트폴리오 섹션을 만들어줘. 6개 프로젝트를 에디토리얼/매거진 스타일로 배치해줘. 일부는 크고 일부는 작은 비대칭 그리드, 이미지 호버 시 줌+오버레이 효과, 스크롤하면 순차적으로 나타나는 애니메이션. placeholder 이미지는 picsum.photos 사용. 단일 HTML 파일로.",
+  "assertions": [
+    {"id": "A1", "text": "CSS 변수 시스템 사용 (--color-*, --font-* 등 커스텀 프로퍼티 5개 이상)", "type": "programmatic"},
+    {"id": "A2", "text": "제네릭 폰트 미사용 (Inter, Roboto, Arial이 primary 폰트가 아님)", "type": "programmatic"},
+    {"id": "A3", "text": "Google Fonts 로딩 (fonts.googleapis.com 링크 존재)", "type": "programmatic"},
+    {"id": "A4", "text": "애니메이션 존재 (@keyframes 또는 animation 속성)", "type": "programmatic"},
+    {"id": "A5", "text": "반응형 대응 (@media 쿼리 또는 clamp() 사용)", "type": "programmatic"},
+    {"id": "A6", "text": "6개 프로젝트 비대칭 그리드 + 호버 줌/오버레이 + 스크롤 애니메이션", "type": "manual"},
+    {"id": "A7", "text": "호버 인터랙션 (:hover 의사 클래스 사용)", "type": "programmatic"}
+  ]
+}

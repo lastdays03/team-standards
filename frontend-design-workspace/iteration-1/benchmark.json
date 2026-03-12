@@ -1,0 +1,57 @@
+{
+  "skill_name": "frontend-design",
+  "iteration": 1,
+  "configurations": [
+    {
+      "name": "with_skill (new)",
+      "results": [
+        {"eval_name": "saas-landing-page", "pass_rate": 100.0, "tokens": 81717, "duration_s": 205.0, "assertions_passed": 6, "assertions_total": 6},
+        {"eval_name": "kpi-dashboard-cards", "pass_rate": 100.0, "tokens": 67946, "duration_s": 124.9, "assertions_passed": 6, "assertions_total": 6},
+        {"eval_name": "portfolio-gallery", "pass_rate": 100.0, "tokens": 69761, "duration_s": 135.2, "assertions_passed": 6, "assertions_total": 6}
+      ],
+      "aggregate": {
+        "mean_pass_rate": 100.0,
+        "stddev_pass_rate": 0.0,
+        "mean_tokens": 73141,
+        "stddev_tokens": 6094,
+        "mean_duration_s": 155.0,
+        "stddev_duration_s": 35.5
+      }
+    },
+    {
+      "name": "old_skill (baseline)",
+      "results": [
+        {"eval_name": "saas-landing-page", "pass_rate": 100.0, "tokens": 27387, "duration_s": 167.7, "assertions_passed": 6, "assertions_total": 6},
+        {"eval_name": "kpi-dashboard-cards", "pass_rate": 100.0, "tokens": 20106, "duration_s": 85.6, "assertions_passed": 6, "assertions_total": 6},
+        {"eval_name": "portfolio-gallery", "pass_rate": 83.3, "tokens": 21964, "duration_s": 115.1, "assertions_passed": 5, "assertions_total": 6}
+      ],
+      "aggregate": {
+        "mean_pass_rate": 94.4,
+        "stddev_pass_rate": 7.9,
+        "mean_tokens": 23152,
+        "stddev_tokens": 3142,
+        "mean_duration_s": 122.8,
+        "stddev_duration_s": 33.7
+      }
+    }
+  ],
+  "delta": {
+    "pass_rate": "+5.6pp",
+    "tokens": "+216%",
+    "duration": "+26%"
+  },
+  "analysis": {
+    "observations": [
+      "new_skill이 모든 eval에서 100% pass rate 달성 (old_skill은 eval-3에서 A4 @keyframes 실패)",
+      "old_skill의 eval-3 portfolio에서 CSS @keyframes 애니메이션 미사용 — transition만 사용하여 A4 실패",
+      "new_skill은 references 파일 읽기로 인해 토큰 소비가 ~3배 높음 (73K vs 23K)",
+      "시간 차이는 상대적으로 적음 (+26%) — 토큰 증가 대비 효율적",
+      "new_skill의 CSS 변수 수가 더 많음 (16-25개 vs 11-20개) — 더 체계적인 디자인 토큰 시스템",
+      "new_skill의 clamp() 사용이 현저히 많음 (eval-1: 13개, eval-3: 19개 vs old 2-2개) — 더 나은 반응형",
+      "폰트 선택에서 new_skill이 aesthetic-palettes.md의 권장 페어링을 정확히 따름 (Instrument Serif + Inter Tight 등)"
+    ],
+    "non_discriminating_assertions": ["A1 (CSS 변수)", "A2 (제네릭 폰트)", "A3 (Google Fonts)", "A7 (호버)"],
+    "discriminating_assertions": ["A4 (애니메이션) — old_skill eval-3에서 실패"],
+    "recommendation": "new_skill은 품질 면에서 우수하나 토큰 비용이 높음. references를 선택적으로 읽도록 최적화하면 비용 절감 가능."
+  }
+}
